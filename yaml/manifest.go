@@ -19,6 +19,14 @@ type (
 		resource()
 	}
 
+	// RawResource is a raw encoded resource with the
+	// resource kind and type extracted.
+	RawResource struct {
+		Kind string
+		Type string
+		Data []byte `yaml:"-"`
+	}
+
 	resource struct {
 		Kind string `json:"kind"`
 		Type string `json:"type"`
