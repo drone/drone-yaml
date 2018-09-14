@@ -88,6 +88,14 @@ func Verify(data []byte, key Key) (bool, error) {
 	return hmac.Equal(mac1, mac2), nil
 }
 
+// WriteTo writes the signature to the yaml file. If the
+// signature already exists it is removed, and the new
+// signature is appended to the end of the document.
+func WriteTo(data []byte, hmac string) ([]byte, error) {
+	res, err := yaml.ParseRawBytes(data)
+	return upsert(res, hmac), err
+}
+
 // helper function extracts the hex-encoded signature
 // resource from the parsed resource list.
 func extract(res []*yaml.RawResource) ([]byte, error) {
@@ -117,4 +125,27 @@ func sign(resources []*yaml.RawResource, key Key) ([]byte, error) {
 		}
 	}
 	return h.Sum(nil), nil
+}
+
+// helper function inserts or updates the hmac signature
+// into the yaml document, and returns an updated copy.
+func upsert(res []*yaml.RawResource, hmac string) []byte {
+	var buf bytes.Buffer
+	for _, r := range res {
+		if r.Kind != yaml.KindSignature {
+			buf.WriteString("---")
+			buf.WriteByte('\n')
+			buf.Write(r.Data)
+		}
+	}
+	buf.WriteString("---")
+	buf.WriteByte('\n')
+	buf.WriteString("kind: signature")
+	buf.WriteByte('\n')
+	buf.WriteString("hmac: " + hmac)
+	buf.WriteByte('\n')
+	buf.WriteByte('\n')
+	buf.WriteString("...")
+	buf.WriteByte('\n')
+	return buf.Bytes()
 }
