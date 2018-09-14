@@ -1,0 +1,81 @@
+kind: pipeline
+name: default
+
+platform:
+  os: windows
+  arch: arm64
+  variant: 7
+  version: 1803
+
+workspace:
+  base: /go
+  path: src/github.com/drone/go-yaml
+
+clone:
+  disable: true
+  depth: 50
+
+steps:
+- name: test
+  image: golang
+  pull: always
+  shell: bash
+  commands:
+  - go get
+  - go test
+  environment:
+    GOOS: windows
+    GOARCH: arm
+  privileged: true
+  when:
+    branch:
+    - master
+    - develop
+
+- name: build
+  build:
+    image: octocat/hello-world
+    context: .
+    dockerfile: Dockerfile
+    labels:
+      foo: bar
+      baz: qux
+    cache_from:
+    - octocat/knife-spoon
+
+- name: push
+  push: octocat/hello-world
+
+services:
+- name: redis
+  image: redis:latest
+  detach: true
+  entrypoint: [ /bin/redis-server ]
+  command: [ --port, 6380 ]
+  ports:
+  - 6380
+  working_dir: /data
+  volumes:
+  - name: data
+    path: /data
+  failure: ignore
+  environment:
+    REDIS_USERNAME: foo
+    REDIS_PASSWORD: bar
+
+volumes:
+- name: data
+  temp: {}
+- name: other
+  host:
+    path: /tmp/data
+
+trigger:
+  branch:
+    include:
+    - master
+    - develop
+
+depends_on:
+- foo
+- bar

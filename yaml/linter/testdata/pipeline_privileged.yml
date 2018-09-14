@@ -1,0 +1,17 @@
+---
+kind: pipeline
+name: linux
+
+steps:
+- name: test
+  image: golang
+  commands:
+  - go build
+  - go test
+  privileged: true
+
+services:
+- name: database
+  image: redis
+  ports:
+  - 6379

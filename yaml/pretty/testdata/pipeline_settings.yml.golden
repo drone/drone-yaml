@@ -1,0 +1,21 @@
+---
+kind: pipeline
+name: default
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: notify
+  image: plugins/slack
+  settings:
+    labels:
+    - foo
+    - bar
+    - baz
+    root: general
+    token:
+      $secret: token
+
+...

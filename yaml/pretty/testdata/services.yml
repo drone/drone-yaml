@@ -1,0 +1,32 @@
+kind: pipeline
+name: default
+
+steps:
+- name: test
+  image: golang
+  commands:
+    - go build
+    - go test -v
+
+services:
+- name: redis
+  image: redis:localhost
+  ports:
+  - 6379
+  entrypoint:
+  - /bin/redis-server
+  command:
+  - --port
+  - 6380
+- name: mysql
+  image: mysql:latest
+  ports:
+  - 3306
+  environment:
+    MYSQL_USERNAME: root
+    MYSQL_PASSWORD:
+      $secret: password
+
+depends_on:
+  - foo
+  - bar

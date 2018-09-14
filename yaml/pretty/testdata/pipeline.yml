@@ -1,0 +1,138 @@
+---
+kind: pipeline
+name: default
+
+clone:
+  disable: true
+  depth: 50
+
+platform:
+  os: windows
+  arch: arm64
+  variant: 7
+  version: 1803
+
+workspace:
+  base: /go
+  path: src/github.com/octocat/hello-world
+
+steps:
+- name: test_build
+  build:
+    image: drone/drone
+    context: .
+    args:
+      foo: bar
+      baz: boo
+    labels:
+      qux: qoo
+    cache_from:
+    - alpine
+    - golang
+
+- name: test_push
+  push:
+    image: drone/drone
+
+- name: test_commands
+  image: drone/drone
+  pull: always
+  shell: bash
+  commands:
+  - go get
+  - go test
+  failure: ignore
+
+- name: test_volumes
+  image: docker
+  commands:
+  - docker build
+  - docker test
+  environment:
+    DOCKER_HOST: /var/run/docker.sock
+  privileged: true
+  volumes:
+  - name: docker
+    path: /var/run/docker.sock
+
+# - name: test_privileged
+#   image: alpine
+#   commands:
+#   - ls /proc
+#   privileged: true
+
+# - name: test_devices
+#   image: alpine
+#   devices:
+#   - name: xvda
+#     path: /dev/xvda
+
+- name: test_env_secrets
+  image: alpine
+  environment:
+    GOOS: linux
+    GOARCH: amd64
+    SSH_KEY:
+      $secret: username
+  commands:
+  - go get
+  - go build
+
+- name: test_when
+  image: alpine
+  depends_on:
+  - foo
+  - bar
+  when:
+    branch:
+    - master
+    - develop
+    status:
+    - success
+    ref:
+      include:
+      - refs/tags/*
+      exclude:
+      - refs/tags/feature-*
+
+services:
+- name: test_entrypoint
+  image: reids:latest
+  entrypoint:
+  - /bin/redis-server
+  ports:
+  - 6379
+
+# - name: test_command
+#   image: reids:latest
+#   command:
+#   - --port
+#   - 6380
+#   ports:
+#   - 6380
+
+# - name: test_working_dir
+#   image: redis:latest
+#   working_dir: /data
+#   ports:
+#   - port: 6379
+#     host: 6380
+#     protocol: TCP
+
+# volumes:
+# - name: docker
+#   host:
+#     path: /var/run/docker.sock
+# - name: temp
+#   temp: {}
+
+# trigger:
+#   branch:
+#   - master
+#   - develop
+#   status:
+#   - success
+
+# depends_on:
+# - foo
+# - bar

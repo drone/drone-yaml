@@ -1,0 +1,21 @@
+---
+kind: pipeline
+name: default
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: test_build
+  build:
+    image: octocat/hello-world
+    context: .
+    args:
+      foo: bar
+      baz: boo
+    labels:
+      qux: qoo
+    cache_from:
+    - alpine
+    - golang

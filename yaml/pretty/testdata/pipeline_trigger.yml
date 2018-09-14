@@ -1,0 +1,20 @@
+kind: pipeline
+name: default
+
+steps:
+  - name: test
+    image: golang
+    commands:
+      - go build
+      - go test -v
+
+trigger:
+  branch:
+    - master
+    - develop
+  event:
+    include:
+      - push
+      - pull_request
+    exclude:
+      - tag

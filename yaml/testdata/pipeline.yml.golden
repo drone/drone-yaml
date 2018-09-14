@@ -1,0 +1,129 @@
+[
+  {
+    "kind": "pipeline",
+    "name": "default",
+    "clone": {
+      "disable": true,
+      "depth": 50
+    },
+    "depends_on": [
+      "foo",
+      "bar"
+    ],
+    "platform": {
+      "os": "windows",
+      "arch": "arm64",
+      "variant": "7",
+      "version": "1803"
+    },
+    "services": [
+      {
+        "command": [
+          "--port",
+          "6380"
+        ],
+        "detach": true,
+        "entrypoint": [
+          "/bin/redis-server"
+        ],
+        "environment": {
+          "REDIS_PASSWORD": {
+            "value": "bar"
+          },
+          "REDIS_USERNAME": {
+            "value": "foo"
+          }
+        },
+        "failure": "ignore",
+        "image": "redis:latest",
+        "name": "redis",
+        "ports": [
+          {
+            "port": 6380
+          }
+        ],
+        "volumes": [
+          {
+            "name": "data",
+            "path": "/data"
+          }
+        ],
+        "working_dir": "/data"
+      }
+    ],
+    "steps": [
+      {
+        "commands": [
+          "go get",
+          "go test"
+        ],
+        "environment": {
+          "GOARCH": {
+            "value": "arm"
+          },
+          "GOOS": {
+            "value": "windows"
+          }
+        },
+        "image": "golang",
+        "name": "test",
+        "privileged": true,
+        "pull": "always",
+        "shell": "bash",
+        "when": {
+          "branch": {
+            "include": [
+              "master",
+              "develop"
+            ]
+          }
+        }
+      },
+      {
+        "build": {
+          "cache_from": [
+            "octocat/knife-spoon"
+          ],
+          "context": ".",
+          "dockerfile": "Dockerfile",
+          "image": "octocat/hello-world",
+          "labels": {
+            "baz": "qux",
+            "foo": "bar"
+          }
+        },
+        "name": "build"
+      },
+      {
+        "name": "push",
+        "push": {
+          "image": "octocat/hello-world"
+        }
+      }
+    ],
+    "trigger": {
+      "branch": {
+        "include": [
+          "master",
+          "develop"
+        ]
+      }
+    },
+    "volumes": [
+      {
+        "name": "data",
+        "temp": {}
+      },
+      {
+        "name": "other",
+        "host": {
+          "path": "/tmp/data"
+        }
+      }
+    ],
+    "workspace": {
+      "base": "/go",
+      "path": "src/github.com/drone/go-yaml"
+    }
+  }
+]

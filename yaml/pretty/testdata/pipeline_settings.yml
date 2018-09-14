@@ -1,0 +1,14 @@
+kind: pipeline
+name: default
+
+steps:
+- name: notify
+  image: plugins/slack
+  settings:
+    token:
+      $secret: token
+    root: general
+    labels:
+    - foo
+    - bar
+    - baz

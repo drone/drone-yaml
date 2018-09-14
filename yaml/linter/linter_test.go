@@ -1,0 +1,169 @@
+package linter
+
+import (
+	"path"
+	"testing"
+
+	"github.com/drone/drone-yaml/yaml"
+)
+
+func TestLint(t *testing.T) {
+	tests := []struct {
+		path    string
+		trusted bool
+		invalid bool
+		message string
+	}{
+		{
+			path:    "testdata/simple.yml",
+			trusted: false,
+			invalid: false,
+		},
+		{
+			path:    "testdata/missing_image.yml",
+			invalid: true,
+			message: "linter: invalid or missing image",
+		},
+		{
+			path:    "testdata/missing_name.yml",
+			invalid: true,
+			message: "linter: invalid or missing name",
+		},
+		// user should not be able to mount host path
+		// volumes unless the repository is trusted.
+		{
+			path:    "testdata/volume_host_path.yml",
+			trusted: false,
+			invalid: true,
+			message: "linter: untrusted repsitories cannot mount host volumes",
+		},
+		{
+			path:    "testdata/volume_host_path.yml",
+			trusted: true,
+			invalid: false,
+		},
+		// user should be able to mount emptyDir volumes
+		// where no medium is specified.
+		{
+			path:    "testdata/volume_empty_dir.yml",
+			trusted: false,
+			invalid: false,
+		},
+		// user should not be able to mount in-memory
+		// emptyDir volumes unless the repository is
+		// trusted.
+		{
+			path:    "testdata/volume_empty_dir_memory.yml",
+			trusted: false,
+			invalid: true,
+			message: "linter: untrusted repsitories cannot mount in-memory volumes",
+		},
+		{
+			path:    "testdata/volume_empty_dir_memory.yml",
+			trusted: true,
+			invalid: false,
+		},
+		// user should not be able to bind to host ports
+		// or IP addresses unless the repository is trusted.
+		{
+			path:    "testdata/service_port_host.yml",
+			trusted: false,
+			invalid: true,
+			message: "linter: untrusted repositories cannot map to a host port",
+		},
+		{
+			path:    "testdata/service_port_host.yml",
+			trusted: true,
+			invalid: false,
+		},
+		{
+			path:    "testdata/pipeline_port_host.yml",
+			trusted: false,
+			invalid: true,
+			message: "linter: untrusted repositories cannot map to a host port",
+		},
+		{
+			path:    "testdata/pipeline_port_host.yml",
+			trusted: true,
+			invalid: false,
+		},
+		// user should not be able to mount devices unless
+		// the repository is trusted.
+		{
+			path:    "testdata/service_device.yml",
+			trusted: false,
+			invalid: true,
+			message: "linter: untrusted repositories cannot mount devices",
+		},
+		{
+			path:    "testdata/service_device.yml",
+			trusted: true,
+			invalid: false,
+		},
+		{
+			path:    "testdata/pipeline_device.yml",
+			trusted: false,
+			invalid: true,
+			message: "linter: untrusted repositories cannot mount devices",
+		},
+		{
+			path:    "testdata/pipeline_device.yml",
+			trusted: true,
+			invalid: false,
+		},
+		// user should not be able to set the securityContext
+		// unless the repository is trusted.
+		{
+			path:    "testdata/pipeline_privileged.yml",
+			trusted: false,
+			invalid: true,
+			message: "linter: untrusted repositories cannot enable privileged mode",
+		},
+		{
+			path:    "testdata/pipeline_privileged.yml",
+			trusted: true,
+			invalid: false,
+		},
+	}
+	for _, test := range tests {
+		name := path.Base(test.path)
+		if test.trusted {
+			name = name + "/trusted"
+		}
+		t.Run(name, func(t *testing.T) {
+			resources, err := yaml.ParseFile(test.path)
+			if err != nil {
+				t.Logf("yaml: %s", test.path)
+				t.Logf("trusted: %v", test.trusted)
+				t.Error(err)
+				return
+			}
+
+			err = Lint(resources.Resources[0], test.trusted)
+			if err == nil && test.invalid == true {
+				t.Logf("yaml: %s", test.path)
+				t.Logf("trusted: %v", test.trusted)
+				t.Errorf("Expect lint error")
+				return
+			}
+
+			if err != nil && test.invalid == false {
+				t.Logf("yaml: %s", test.path)
+				t.Logf("trusted: %v", test.trusted)
+				t.Errorf("Expect lint error is nil, got %s", err)
+				return
+			}
+
+			if err == nil {
+				return
+			}
+
+			if got, want := err.Error(), test.message; got != want {
+				t.Logf("yaml: %s", test.path)
+				t.Logf("trusted: %v", test.trusted)
+				t.Errorf("Want message %q, got %q", want, got)
+				return
+			}
+		})
+	}
+}

@@ -1,0 +1,15 @@
+kind: pipeline
+name: default
+
+steps:
+  - name: build
+    image: golang
+    commands:
+      - go build
+    resources:
+      limits:
+        cpu: 200m
+        memory: '100Mi'
+      requests:
+        cpu: 100m
+        memory: '50Mi'

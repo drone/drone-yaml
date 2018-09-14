@@ -1,0 +1,22 @@
+kind: pipeline
+name: default
+
+steps:
+- name: backend
+  image: golang:1.11
+  commands:
+  - go build
+  - go test -v
+
+- name: frontend
+  image: node
+  commands:
+    - npm install
+    - npm run test
+    - npm run lint
+
+services:
+- name: redis
+  image: redis:latest
+  ports:
+  - 6379
