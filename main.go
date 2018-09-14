@@ -66,13 +66,6 @@ func runFormat() error {
 		return err
 	}
 
-	for _, r := range m.Resources {
-		err := linter.Lint(r, *formatPriv)
-		if err != nil {
-			return err
-		}
-	}
-
 	b := new(bytes.Buffer)
 	pretty.Print(b, m)
 
@@ -100,24 +93,22 @@ func runLint() error {
 
 func runSign() error {
 	f := *signFile
-	m, err := yaml.Parse(f)
+	d, err := ioutil.ReadAll(f)
 	if err != nil {
 		return err
 	}
 
-	k := []byte(*signKey)
+	k := signer.KeyString(*signKey)
 
 	if *signSave {
-		err := signer.SignUpdate(m, k)
+		out, err := signer.SignUpdate(d, k)
 		if err != nil {
 			return err
 		}
-		b := new(bytes.Buffer)
-		pretty.Print(b, m)
-		return ioutil.WriteFile(f.Name(), b.Bytes(), 0644)
+		return ioutil.WriteFile(f.Name(), out, 0644)
 	}
 
-	hmac, err := signer.Sign(m, k)
+	hmac, err := signer.Sign(d, k)
 	if err != nil {
 		return err
 	}
@@ -127,13 +118,13 @@ func runSign() error {
 
 func runVerify() error {
 	f := *verifyFile
-	m, err := yaml.Parse(f)
+	d, err := ioutil.ReadAll(f)
 	if err != nil {
 		return err
 	}
 
-	k := []byte(*verifyKey)
-	ok, err := signer.Verify(m, k)
+	k := signer.KeyString(*verifyKey)
+	ok, err := signer.Verify(d, k)
 	if err != nil {
 		return err
 	} else if !ok {

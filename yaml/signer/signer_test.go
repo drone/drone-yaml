@@ -1,20 +1,20 @@
 package signer
 
 import (
+	"io/ioutil"
 	"testing"
-
-	"github.com/drone/drone-yaml/yaml"
 )
 
 func TestSign(t *testing.T) {
-	manifest, err := yaml.ParseFile("testdata/signed.yml")
+	in, err := ioutil.ReadFile("testdata/signed.yml")
 	if err != nil {
 		t.Error(err)
 		return
 	}
-	key := []byte("589396227fff5a93ba934965e8735f88")
-	want := "43ea63152d72a554b2ab2bba0bac0d33d5d6d2de6f368c0c6ff544981f1f94ef"
-	got, err := Sign(manifest, key)
+
+	key := KeyString("589396227fff5a93ba934965e8735f88")
+	want := "389cf92a7472870783a9a5ea77b4abe58a4bb67ba58e1e7293e943aee314aedc"
+	got, err := Sign(in, key)
 	if err != nil {
 		t.Error(err)
 	}
@@ -22,7 +22,7 @@ func TestSign(t *testing.T) {
 		t.Errorf("Expected hash %s, got %s", want, got)
 	}
 
-	verified, err := Verify(manifest, key)
+	verified, err := Verify(in, key)
 	if err != nil {
 		t.Error(err)
 	}
@@ -31,14 +31,14 @@ func TestSign(t *testing.T) {
 	}
 }
 
-func TestVerify_Failure(t *testing.T) {
-	manifest, err := yaml.ParseFile("testdata/signed.yml")
+func TestVerify_Invalid(t *testing.T) {
+	in, err := ioutil.ReadFile("testdata/invalid_signature.yml")
 	if err != nil {
 		t.Error(err)
 		return
 	}
-	key := []byte("c953bd41ad0f75848a78ccd54d3861fa")
-	verified, err := Verify(manifest, key)
+	key := KeyString("c953bd41ad0f75848a78ccd54d3861fa")
+	verified, err := Verify(in, key)
 	if err != nil {
 		t.Error(err)
 	}
@@ -48,13 +48,13 @@ func TestVerify_Failure(t *testing.T) {
 }
 
 func TestVerify_InvalidKey(t *testing.T) {
-	manifest, err := yaml.ParseFile("testdata/signed.yml")
+	in, err := ioutil.ReadFile("testdata/signed.yml")
 	if err != nil {
 		t.Error(err)
 		return
 	}
 	key := []byte("this-is-an-invalid-key")
-	_, err = Verify(manifest, key)
+	_, err = Verify(in, key)
 	if err != ErrInvalidKey {
 		t.Errorf("Expected ErrInvalidKey")
 	}
@@ -63,13 +63,13 @@ func TestVerify_InvalidKey(t *testing.T) {
 // This test verifies that signature verification
 // fails if no signature is present in the yaml.
 func TestVerify_MissingSignature(t *testing.T) {
-	manifest, err := yaml.ParseFile("testdata/missing_signature.yml")
+	in, err := ioutil.ReadFile("testdata/missing_signature.yml")
 	if err != nil {
 		t.Error(err)
 		return
 	}
-	key := []byte("589396227fff5a93ba934965e8735f88")
-	verified, err := Verify(manifest, key)
+	key := KeyString("589396227fff5a93ba934965e8735f88")
+	verified, err := Verify(in, key)
 	if err != nil {
 		t.Error(err)
 	}
@@ -81,37 +81,20 @@ func TestVerify_MissingSignature(t *testing.T) {
 // The test verifies that the SignUpdate function signs the
 // configuraiton and appends the signature.
 func TestSignUpdate(t *testing.T) {
-	manifest, err := yaml.ParseFile("testdata/signed.yml")
+	before, err := ioutil.ReadFile("testdata/invalid_signature.yml")
 	if err != nil {
 		t.Error(err)
 		return
 	}
-	// verify the yaml defines 3 resources. 1 pipeline,
-	// 1 secret, and 1 signature.
-	if len(manifest.Resources) != 3 {
-		t.Errorf("Expect 3 resources in yaml file")
+
+	key := KeyString("589396227fff5a93ba934965e8735f88")
+	after, err := SignUpdate(before, key)
+	if err != nil {
+		t.Error(err)
+		return
 	}
 
-	key := []byte("589396227fff5a93ba934965e8735f88")
-
-	SignUpdate(manifest, key)
-	signature, ok := manifest.Resources[len(manifest.Resources)-1].(*yaml.Signature)
-	if !ok {
-		t.Errorf("Expected signature appended to the resource list")
-	}
-
-	// verify that the existing signature resource
-	// has been replaced.
-	if len(manifest.Resources) != 3 {
-		t.Errorf("Expect 3 resources in yaml file")
-	}
-
-	hash := "43ea63152d72a554b2ab2bba0bac0d33d5d6d2de6f368c0c6ff544981f1f94ef"
-	if got, want := signature.Hmac, hash; got != want {
-		t.Errorf("Expected hash %s, got %s", want, got)
-	}
-
-	verified, err := Verify(manifest, key)
+	verified, err := Verify(after, key)
 	if err != nil {
 		t.Error(err)
 	}
@@ -123,45 +106,20 @@ func TestSignUpdate(t *testing.T) {
 // The test verifies that the SignUpdate function signs the
 // configuraiton and appends the signature.
 func TestSignUpdate_Append(t *testing.T) {
-	manifest, err := yaml.ParseFile("testdata/signed.yml")
+	before, err := ioutil.ReadFile("testdata/missing_signature.yml")
 	if err != nil {
 		t.Error(err)
 		return
 	}
 
-	// verify the yaml defines 3 resources. 1 pipeline,
-	// 1 secret, and 1 signature.
-	if len(manifest.Resources) != 3 {
-		t.Errorf("Expect 3 resources in yaml file")
+	key := KeyString("589396227fff5a93ba934965e8735f88")
+	after, err := SignUpdate(before, key)
+	if err != nil {
+		t.Error(err)
+		return
 	}
 
-	// remove the last resource from the list, which
-	// should be the signature resource.
-	manifest.Resources = manifest.Resources[:len(manifest.Resources)-1]
-	if len(manifest.Resources) != 2 {
-		t.Errorf("Expect 2 resources in yaml file")
-	}
-
-	key := []byte("589396227fff5a93ba934965e8735f88")
-
-	SignUpdate(manifest, key)
-	signature, ok := manifest.Resources[len(manifest.Resources)-1].(*yaml.Signature)
-	if !ok {
-		t.Errorf("Expected signature appended to the resource list")
-	}
-
-	// verify that the signature resource has been
-	// appended to the resource list.
-	if len(manifest.Resources) != 3 {
-		t.Errorf("Expect 3 resources in yaml file")
-	}
-
-	hash := "43ea63152d72a554b2ab2bba0bac0d33d5d6d2de6f368c0c6ff544981f1f94ef"
-	if got, want := signature.Hmac, hash; got != want {
-		t.Errorf("Expected hash %s, got %s", want, got)
-	}
-
-	verified, err := Verify(manifest, key)
+	verified, err := Verify(after, key)
 	if err != nil {
 		t.Error(err)
 	}
@@ -171,13 +129,13 @@ func TestSignUpdate_Append(t *testing.T) {
 }
 
 func TestSignUpdate_InvalidKey(t *testing.T) {
-	manifest, err := yaml.ParseFile("testdata/signed.yml")
+	in, err := ioutil.ReadFile("testdata/signed.yml")
 	if err != nil {
 		t.Error(err)
 		return
 	}
-	key := []byte("this-is-an-invalid-key")
-	err = SignUpdate(manifest, key)
+	key := KeyString("this-is-an-invalid-key")
+	_, err = SignUpdate(in, key)
 	if err != ErrInvalidKey {
 		t.Errorf("Expected ErrInvalidKey")
 	}
