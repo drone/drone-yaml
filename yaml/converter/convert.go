@@ -23,34 +23,22 @@ func Convert(from *newyaml.Pipeline) *config.Config {
 	// convert the platform section
 	//
 
-	to.Platform.OS = "linux"
-	to.Platform.Arch = "amd64"
-	if v := from.Platform; v != nil {
-		if v.OS != "" {
-			to.Platform.OS = v.OS
-		}
-		if v.Arch != "" {
-			to.Platform.Arch = v.Arch
-		}
-	}
+	to.Platform.OS = from.Platform.OS
+	to.Platform.Arch = from.Platform.Arch
 
 	//
 	// convert the clone section
 	//
 
-	if v := from.Clone; v != nil {
-		to.Clone.Depth = v.Depth
-		to.Clone.Disable = v.Disable
-	}
+	to.Clone.Depth = from.Clone.Depth
+	to.Clone.Disable = from.Clone.Disable
 
 	//
 	// convert the workspace section
 	//
 
-	if v := from.Workspace; v != nil {
-		to.Workspace.Base = v.Base
-		to.Workspace.Path = v.Path
-	}
+	to.Workspace.Base = from.Workspace.Base
+	to.Workspace.Path = from.Workspace.Path
 
 	//
 	// convert the volumes section
@@ -74,34 +62,7 @@ func Convert(from *newyaml.Pipeline) *config.Config {
 	// convert the trigger section
 	//
 
-	for k, v := range from.Trigger {
-		if v == nil {
-			continue
-		}
-		switch k {
-		case "branch":
-			to.Trigger.Branch.Include = v.Include
-			to.Trigger.Branch.Exclude = v.Exclude
-		case "target":
-			to.Trigger.Environment.Include = v.Include
-			to.Trigger.Environment.Exclude = v.Exclude
-		case "event":
-			to.Trigger.Event.Include = v.Include
-			to.Trigger.Event.Exclude = v.Exclude
-		case "instance":
-			to.Trigger.Instance.Include = v.Include
-			to.Trigger.Instance.Exclude = v.Exclude
-		case "ref":
-			to.Trigger.Ref.Include = v.Include
-			to.Trigger.Ref.Exclude = v.Exclude
-		case "repo":
-			to.Trigger.Repo.Include = v.Include
-			to.Trigger.Repo.Exclude = v.Exclude
-		case "status":
-			to.Trigger.Status.Include = v.Include
-			to.Trigger.Status.Exclude = v.Exclude
-		}
-	}
+	to.Trigger = convertConstraints(from.Trigger)
 
 	//
 	// convert the depends secton
@@ -153,36 +114,22 @@ func convertEnv(from map[string]*newyaml.Variable) map[string]string {
 	return to
 }
 
-func convertConstraints(from map[string]*newyaml.Condition) yaml.Constraints {
+func convertConstraints(from newyaml.Conditions) yaml.Constraints {
 	to := yaml.Constraints{}
-	for k, v := range from {
-		if v == nil {
-			continue
-		}
-		switch k {
-		case "branch":
-			to.Branch.Include = v.Include
-			to.Branch.Exclude = v.Exclude
-		case "target":
-			to.Environment.Include = v.Include
-			to.Environment.Exclude = v.Exclude
-		case "event":
-			to.Event.Include = v.Include
-			to.Event.Exclude = v.Exclude
-		case "instance":
-			to.Instance.Include = v.Include
-			to.Instance.Exclude = v.Exclude
-		case "ref":
-			to.Ref.Include = v.Include
-			to.Ref.Exclude = v.Exclude
-		case "repo":
-			to.Repo.Include = v.Include
-			to.Repo.Exclude = v.Exclude
-		case "status":
-			to.Status.Include = v.Include
-			to.Status.Exclude = v.Exclude
-		}
-	}
+	to.Branch.Include = from.Branch.Include
+	to.Branch.Exclude = from.Branch.Exclude
+	to.Environment.Include = from.Target.Include
+	to.Environment.Exclude = from.Target.Exclude
+	to.Event.Include = from.Event.Include
+	to.Event.Exclude = from.Event.Exclude
+	to.Instance.Include = from.Instance.Include
+	to.Instance.Exclude = from.Instance.Exclude
+	to.Ref.Include = from.Ref.Include
+	to.Ref.Exclude = from.Ref.Exclude
+	to.Repo.Include = from.Repo.Include
+	to.Repo.Exclude = from.Repo.Exclude
+	to.Status.Include = from.Status.Include
+	to.Status.Exclude = from.Status.Exclude
 	return to
 }
 
