@@ -177,7 +177,11 @@ func convertSecretMapping(from *newyaml.Container) []*yaml.Secret {
 		if v.Secret != "" {
 			to = append(to, &yaml.Secret{
 				Source: v.Secret,
-				Target: "PLUGIN" + strings.ToUpper(k),
+				Target: "PLUGIN_" + strings.ToUpper(k),
+			})
+			to = append(to, &yaml.Secret{
+				Source: v.Secret,
+				Target: strings.ToUpper(k),
 			})
 		}
 	}
@@ -185,7 +189,7 @@ func convertSecretMapping(from *newyaml.Container) []*yaml.Secret {
 		if v.Secret != "" {
 			to = append(to, &yaml.Secret{
 				Source: v.Secret,
-				Target: "PLUGIN" + strings.ToUpper(k),
+				Target: "PLUGIN_" + strings.ToUpper(k),
 			})
 		}
 	}
