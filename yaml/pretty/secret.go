@@ -50,4 +50,4 @@ func printData(w writer, d map[string]string) {
 }
 
 // replace spaces and newlines.
-var spaceReplacer = strings.NewReplacer(" ", "\n")
+var spaceReplacer = strings.NewReplacer(" ", "", "\n", "")
