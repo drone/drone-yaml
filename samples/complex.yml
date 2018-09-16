@@ -40,6 +40,9 @@ steps:
     token:
       $secret: token
 
+node:
+  disk: ssd
+
 depends_on:
 - build
 

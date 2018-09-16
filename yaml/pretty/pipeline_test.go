@@ -2,15 +2,6 @@ package pretty
 
 import "testing"
 
-// func TestPipeline(t *testing.T) {
-// 	ok, err := diff("testdata/pipeline.yml")
-// 	if err != nil {
-// 		t.Error(err)
-// 	} else if !ok {
-// 		t.Errorf("Unepxected formatting")
-// 	}
-// }
-
 func TestPipeline_Build_Short(t *testing.T) {
 	ok, err := diff("testdata/pipeline_build_short.yml")
 	if err != nil {
@@ -49,6 +40,15 @@ func TestPipeline_Clone_Disable(t *testing.T) {
 
 func TestPipeline_Depends(t *testing.T) {
 	ok, err := diff("testdata/pipeline_depends.yml")
+	if err != nil {
+		t.Error(err)
+	} else if !ok {
+		t.Errorf("Unepxected formatting")
+	}
+}
+
+func TestPipeline_Node(t *testing.T) {
+	ok, err := diff("testdata/pipeline_node.yml")
 	if err != nil {
 		t.Error(err)
 	} else if !ok {

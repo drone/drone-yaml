@@ -7,14 +7,15 @@ type Pipeline struct {
 	Type string `json:"type,omitempty"`
 	Name string `json:"name,omitempty"`
 
-	Clone     Clone        `json:"clone,omitempty"`
-	DependsOn []string     `json:"depends_on,omitempty" yaml:"depends_on" `
-	Platform  Platform     `json:"platform,omitempty"`
-	Services  []*Container `json:"services,omitempty"`
-	Steps     []*Container `json:"steps,omitempty"`
-	Trigger   Conditions   `json:"trigger,omitempty"`
-	Volumes   []*Volume    `json:"volumes,omitempty"`
-	Workspace Workspace    `json:"workspace,omitempty"`
+	Clone     Clone             `json:"clone,omitempty"`
+	DependsOn []string          `json:"depends_on,omitempty" yaml:"depends_on" `
+	Node      map[string]string `json:"node,omitempty" yaml:"node"`
+	Platform  Platform          `json:"platform,omitempty"`
+	Services  []*Container      `json:"services,omitempty"`
+	Steps     []*Container      `json:"steps,omitempty"`
+	Trigger   Conditions        `json:"trigger,omitempty"`
+	Volumes   []*Volume         `json:"volumes,omitempty"`
+	Workspace Workspace         `json:"workspace,omitempty"`
 }
 
 // GetKind returns the resource kind.
