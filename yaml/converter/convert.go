@@ -25,6 +25,13 @@ func Convert(from *newyaml.Pipeline) *config.Config {
 
 	to.Platform.OS = from.Platform.OS
 	to.Platform.Arch = from.Platform.Arch
+	if to.Platform.OS == "" {
+		to.Platform.OS = "linux"
+	}
+	if to.Platform.Arch == "" {
+		to.Platform.Arch = "amd64"
+	}
+	to.Platform.Name = to.Platform.OS + "/" + to.Platform.Arch
 
 	//
 	// convert the clone section
