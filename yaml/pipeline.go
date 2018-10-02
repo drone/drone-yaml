@@ -3,9 +3,10 @@ package yaml
 // Pipeline is a resource that defines a continuous
 // delivery pipeline.
 type Pipeline struct {
-	Kind string `json:"kind,omitempty"`
-	Type string `json:"type,omitempty"`
-	Name string `json:"name,omitempty"`
+	Version string `json:"version,omitempty"`
+	Kind    string `json:"kind,omitempty"`
+	Type    string `json:"type,omitempty"`
+	Name    string `json:"name,omitempty"`
 
 	Clone     Clone             `json:"clone,omitempty"`
 	DependsOn []string          `json:"depends_on,omitempty" yaml:"depends_on" `
@@ -17,6 +18,9 @@ type Pipeline struct {
 	Volumes   []*Volume         `json:"volumes,omitempty"`
 	Workspace Workspace         `json:"workspace,omitempty"`
 }
+
+// GetVersion returns the resource version.
+func (p *Pipeline) GetVersion() string { return p.Version }
 
 // GetKind returns the resource kind.
 func (p *Pipeline) GetKind() string { return p.Kind }

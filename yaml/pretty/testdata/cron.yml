@@ -1,3 +1,4 @@
+version: 1
 name: nightly
 kind: cron
 
