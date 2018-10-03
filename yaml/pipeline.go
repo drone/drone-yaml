@@ -75,8 +75,8 @@ type (
 	// ResourceObject describes compute resource
 	// requirements.
 	ResourceObject struct {
-		CPU    string `json:"cpu"`
-		Memory string `json:"memory"`
+		CPU    string    `json:"cpu"`
+		Memory BytesSize `json:"memory"`
 	}
 
 	// Platform defines the target platform.

@@ -14,9 +14,9 @@ steps:
   resources:
     limits:
       cpu: 200m
-      memory: 100Mi
+      memory: 100MiB
     requests:
       cpu: 100m
-      memory: 50Mi
+      memory: 50MiB
 
 ...
