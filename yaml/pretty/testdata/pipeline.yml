@@ -55,6 +55,19 @@ steps:
   - name: docker
     path: /var/run/docker.sock
 
+- name: test_dns
+  image: alpine
+  commands:
+  - ping google.com
+  dns:
+  - 8.8.8.8
+  dns_search:
+  - dc1.example.com
+  - dc2.example.com
+  extra_hosts:
+  - "somehost:162.242.195.82"
+  - "otherhost:50.31.209.229"
+
 # - name: test_privileged
 #   image: alpine
 #   commands:

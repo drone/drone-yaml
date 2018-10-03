@@ -61,6 +61,15 @@ func checkContainer(container *yaml.Container, trusted bool) error {
 	if trusted == false && len(container.Devices) > 0 {
 		return errors.New("linter: untrusted repositories cannot mount devices")
 	}
+	if trusted == false && len(container.DNS) > 0 {
+		return errors.New("linter: untrusted repositories cannot configure dns")
+	}
+	if trusted == false && len(container.DNSSearch) > 0 {
+		return errors.New("linter: untrusted repositories cannot configure dns_search")
+	}
+	if trusted == false && len(container.ExtraHosts) > 0 {
+		return errors.New("linter: untrusted repositories cannot configure extra_hosts")
+	}
 	return nil
 }
 

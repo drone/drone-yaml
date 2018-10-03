@@ -40,8 +40,11 @@ type (
 		Detach      bool                  `json:"detach,omitempty"`
 		DependsOn   []string              `json:"depends_on,omitempty" yaml:"depends_on"`
 		Devices     []*VolumeDevice       `json:"devices,omitempty"`
+		DNS         []string              `json:"dns,omitempty"`
+		DNSSearch   []string              `json:"dns_search,omitempty" yaml:"dns_search"`
 		Entrypoint  []string              `json:"entrypoint,omitempty"`
 		Environment map[string]*Variable  `json:"environment,omitempty"`
+		ExtraHosts  []string              `json:"extra_hosts,omitempty" yaml:"extra_hosts"`
 		Failure     string                `json:"failure,omitempty"`
 		Image       string                `json:"image,omitempty"`
 		Name        string                `json:"name,omitempty"`

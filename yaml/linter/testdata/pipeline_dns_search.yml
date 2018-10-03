@@ -1,0 +1,13 @@
+---
+kind: pipeline
+name: linux
+
+steps:
+- name: test
+  image: golang
+  commands:
+  - go build
+  - go test
+  dns_search:
+  - dc1.example.com
+  - dc2.example.com

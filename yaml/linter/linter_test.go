@@ -124,6 +124,41 @@ func TestLint(t *testing.T) {
 			trusted: true,
 			invalid: false,
 		},
+		// user should not be able to set dns, dns_search or
+		// extra_hosts unless the repository is trusted.
+		{
+			path:    "testdata/pipeline_dns.yml",
+			trusted: false,
+			invalid: true,
+			message: "linter: untrusted repositories cannot configure dns",
+		},
+		{
+			path:    "testdata/pipeline_dns.yml",
+			trusted: true,
+			invalid: false,
+		},
+		{
+			path:    "testdata/pipeline_dns_search.yml",
+			trusted: false,
+			invalid: true,
+			message: "linter: untrusted repositories cannot configure dns_search",
+		},
+		{
+			path:    "testdata/pipeline_dns_search.yml",
+			trusted: true,
+			invalid: false,
+		},
+		{
+			path:    "testdata/pipeline_extra_hosts.yml",
+			trusted: false,
+			invalid: true,
+			message: "linter: untrusted repositories cannot configure extra_hosts",
+		},
+		{
+			path:    "testdata/pipeline_extra_hosts.yml",
+			trusted: true,
+			invalid: false,
+		},
 	}
 	for _, test := range tests {
 		name := path.Base(test.path)
