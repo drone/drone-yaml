@@ -10,9 +10,10 @@ import (
 	"log"
 	"os"
 
-	"github.com/drone/drone-yaml-v1/config/compiler"
+	"github.com/drone/drone-runtime/engine"
 	"github.com/drone/drone-yaml/yaml"
-	"github.com/drone/drone-yaml/yaml/converter"
+	"github.com/drone/drone-yaml/yaml/compiler"
+	"github.com/drone/drone-yaml/yaml/compiler/transform"
 	"github.com/drone/drone-yaml/yaml/linter"
 	"github.com/drone/drone-yaml/yaml/pretty"
 	"github.com/drone/drone-yaml/yaml/signer"
@@ -136,31 +137,25 @@ func runVerify() error {
 }
 
 var (
-	trusted      = compile.Flag("trusted", "trusted mode").Bool()
-	clone        = compile.Flag("clone", "clone step").Bool()
-	volume       = compile.Flag("volume", "attached volumes").Strings()
-	network      = compile.Flag("network", "attached networks").Strings()
-	environ      = compile.Flag("env", "environment variable").StringMap()
-	images       = compile.Flag("privileged", "privileged images").Default("plugins/docker").Strings()
-	base         = compile.Flag("base", "workspace base path").Default("/workspace").String()
-	path         = compile.Flag("path", "wrokspace path").String()
-	event        = compile.Flag("event", "event type").PlaceHolder("<event>").Enum("push", "pull_request", "tag", "deployment")
-	repo         = compile.Flag("repo", "repository name").PlaceHolder("octocat/hello-world").String()
-	branch       = compile.Flag("git-branch", "git commit branch").PlaceHolder("master").String()
-	ref          = compile.Flag("git-ref", "git commit ref").PlaceHolder("refs/heads/master").String()
-	deploy       = compile.Flag("deploy-to", "target deployment").PlaceHolder("production").String()
-	platform     = compile.Flag("platform", "target platform").PlaceHolder("linux/amd64").String()
-	secrets      = compile.Flag("secret", "secret variable").StringMap()
-	registries   = compile.Flag("registry", "registry credentials").URLList()
-	username     = compile.Flag("netrc-login", "netrc username").PlaceHolder("<token>").String()
-	password     = compile.Flag("netrc-password", "netrc password").PlaceHolder("x-oauth-basic").String()
-	machine      = compile.Flag("netrc-machine", "netrc machine").PlaceHolder("github.com").String()
-	cpuset       = compile.Flag("cpu-set", "cpu set").PlaceHolder("0,1").String()
-	cpushares    = compile.Flag("cpu-shares", "cpu shares").PlaceHolder("75").Int64()
-	cpuquota     = compile.Flag("cpu-quota", "cpu quota").PlaceHolder("7500").Int64()
-	memlimit     = compile.Flag("mem-limit", "memory limit").PlaceHolder("1GB").Bytes()
-	memswaplimit = compile.Flag("mem-swap-limit", "memory swap limit").PlaceHolder("1GB").Bytes()
-	shmsize      = compile.Flag("shmsize", "shmsize").PlaceHolder("1GB").Bytes()
+	trusted    = compile.Flag("trusted", "trusted mode").Bool()
+	labels     = compile.Flag("label", "container labels").StringMap()
+	clone      = compile.Flag("clone", "clone step").Bool()
+	volume     = compile.Flag("volume", "attached volumes").StringMap()
+	network    = compile.Flag("network", "attached networks").Strings()
+	environ    = compile.Flag("env", "environment variable").StringMap()
+	dind       = compile.Flag("dind", "dind images").Default("plugins/docker").Strings()
+	event      = compile.Flag("event", "event type").PlaceHolder("<event>").Enum("push", "pull_request", "tag", "deployment")
+	repo       = compile.Flag("repo", "repository name").PlaceHolder("octocat/hello-world").String()
+	branch     = compile.Flag("git-branch", "git commit branch").PlaceHolder("master").String()
+	ref        = compile.Flag("git-ref", "git commit ref").PlaceHolder("refs/heads/master").String()
+	instance   = compile.Flag("instance", "drone instance hostname").PlaceHolder("drone.company.com").String()
+	deploy     = compile.Flag("deploy-to", "target deployment").PlaceHolder("production").String()
+	secrets    = compile.Flag("secret", "secret variable").StringMap()
+	registries = compile.Flag("registry", "registry credentials").URLList()
+	username   = compile.Flag("netrc-login", "netrc username").PlaceHolder("<token>").String()
+	password   = compile.Flag("netrc-password", "netrc password").PlaceHolder("x-oauth-basic").String()
+	machine    = compile.Flag("netrc-machine", "netrc machine").PlaceHolder("github.com").String()
+	memlimit   = compile.Flag("mem-limit", "memory limit").PlaceHolder("1GB").Bytes()
 )
 
 func runCompile() error {
@@ -186,15 +181,14 @@ func runCompile() error {
 		return errors.New("cannot find pipeline resource")
 	}
 
-	var secretList []compiler.Secret
-	for k, v := range *secrets {
-		secretList = append(secretList, compiler.Secret{
-			Name:  k,
-			Value: v,
-		})
+	// the user has the option to disable the git clone
+	// if the pipeline is being executed on the local
+	// codebase.
+	if *clone == false {
+		p.Clone.Disable = true
 	}
 
-	var registryList []compiler.Registry
+	var auths []*engine.DockerAuth
 	for _, uri := range *registries {
 		if uri.User == nil {
 			log.Fatalln("Expect registry format [user]:[password]@hostname")
@@ -203,52 +197,41 @@ func runCompile() error {
 		if !ok {
 			log.Fatalln("Invalid or missing registry password")
 		}
-		registryList = append(registryList, compiler.Registry{
-			Hostname: uri.Host,
+		auths = append(auths, &engine.DockerAuth{
+			Address:  uri.Host,
 			Username: uri.User.Username(),
 			Password: password,
 		})
 	}
 
-	var opts = []compiler.Option{
-		compiler.WithClone(*clone),
-		compiler.WithEnviron(*environ),
-		compiler.WithLimits(
-			compiler.Resources{
-				CPUQuota:     *cpuquota,
-				CPUShares:    *cpushares,
-				CPUSet:       *cpuset,
-				ShmSize:      int64(*shmsize),
-				MemLimit:     int64(*memlimit),
-				MemSwapLimit: int64(*memswaplimit),
-			},
-		),
-		compiler.WithMetadata(
-			compiler.Metadata{
-				Branch:      *branch,
-				Event:       *event,
-				Ref:         *ref,
-				Repo:        *repo,
-				Platform:    *platform,
-				Environment: *deploy,
-			},
-		),
-		compiler.WithNetrc(*username, *password, *machine),
-		compiler.WithNetworks(*network...),
-		compiler.WithPrivileged(*images...),
-		compiler.WithRegistry(registryList...),
-		compiler.WithSecret(secretList...),
-		compiler.WithVolumes(*volume...),
-		compiler.WithWorkspace(*base, *path),
-	}
-
-	config := converter.Convert(p)
-	out, err := compiler.New(opts...).Compile(config)
-	if err != nil {
-		return err
-	}
+	comp := new(compiler.Compiler)
+	comp.GitCredentialsFunc = nil // TODO
+	comp.NetrcFunc = nil          // TODO
+	comp.PrivilegedFunc = compiler.DindFunc(*dind)
+	comp.SkipFunc = compiler.SkipFunc(
+		compiler.SkipData{
+			Branch:   *branch,
+			Event:    *event,
+			Instance: *instance,
+			Ref:      *ref,
+			Repo:     *repo,
+			Target:   *deploy,
+		},
+	)
+	comp.TransformFunc = transform.Combine(
+		transform.WithAuths(auths),
+		transform.WithEnviron(*environ),
+		transform.WithLables(*labels),
+		transform.WithLimits(int64(*memlimit), 0),
+		transform.WithNetrc(*username, *password, *machine),
+		transform.WithNetworks(*network),
+		transform.WithProxy(),
+		transform.WithSecrets(*secrets),
+		transform.WithVolumes(*volume),
+	)
+	compiled := comp.Compile(p)
 
 	enc := json.NewEncoder(os.Stdout)
 	enc.SetIndent("", "  ")
-	return enc.Encode(out)
+	return enc.Encode(compiled)
 }

@@ -42,6 +42,8 @@ func isZero(v interface{}) bool {
 		return len(v) == 0
 	case map[string]string:
 		return len(v) == 0
+	case yaml.BytesSize:
+		return int64(v) == 0
 	default:
 		return false
 	}
