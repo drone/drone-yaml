@@ -8,7 +8,7 @@ import (
 
 const (
 	netrcName = ".netrc"
-	netrcPath = "/root/netrc"
+	netrcPath = "/root/.netrc"
 	netrcMode = 0600
 )
 

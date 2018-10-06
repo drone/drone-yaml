@@ -9,11 +9,7 @@ import (
 	"github.com/dchest/uniuri"
 )
 
-// TODO(bradrydzewski) normalize image names
 // TODO(bradrydzewski) provide a default GitCredentialsFunc
-// TODO(bradrydzewski) provide a default PrivilegedFunc
-// TODO(bradrydzewski) provide a default SkipFunc
-
 // TODO(bradrydzewski) handle depends_on (clone, services, etc)
 
 // random provides the default function used to

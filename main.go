@@ -9,6 +9,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/drone/drone-runtime/engine"
 	"github.com/drone/drone-yaml/yaml"
@@ -146,13 +147,16 @@ var (
 	dind       = compile.Flag("dind", "dind images").Default("plugins/docker").Strings()
 	event      = compile.Flag("event", "event type").PlaceHolder("<event>").Enum("push", "pull_request", "tag", "deployment")
 	repo       = compile.Flag("repo", "repository name").PlaceHolder("octocat/hello-world").String()
+	remote     = compile.Flag("git-remote", "git remote url").PlaceHolder("https://github.com/octocat/hello-world.git").String()
 	branch     = compile.Flag("git-branch", "git commit branch").PlaceHolder("master").String()
 	ref        = compile.Flag("git-ref", "git commit ref").PlaceHolder("refs/heads/master").String()
+	sha        = compile.Flag("git-sha", "git commit sha").String()
+	creds      = compile.Flag("git-creds", "git credentials").URLList()
 	instance   = compile.Flag("instance", "drone instance hostname").PlaceHolder("drone.company.com").String()
 	deploy     = compile.Flag("deploy-to", "target deployment").PlaceHolder("production").String()
 	secrets    = compile.Flag("secret", "secret variable").StringMap()
 	registries = compile.Flag("registry", "registry credentials").URLList()
-	username   = compile.Flag("netrc-login", "netrc username").PlaceHolder("<token>").String()
+	username   = compile.Flag("netrc-username", "netrc username").PlaceHolder("<token>").String()
 	password   = compile.Flag("netrc-password", "netrc password").PlaceHolder("x-oauth-basic").String()
 	machine    = compile.Flag("netrc-machine", "netrc machine").PlaceHolder("github.com").String()
 	memlimit   = compile.Flag("mem-limit", "memory limit").PlaceHolder("1GB").Bytes()
@@ -205,8 +209,8 @@ func runCompile() error {
 	}
 
 	comp := new(compiler.Compiler)
-	comp.GitCredentialsFunc = nil // TODO
-	comp.NetrcFunc = nil          // TODO
+	comp.GitCredentialsFunc = defaultCreds // TODO create compiler.GitCredentialsFunc and compiler.GlobalGitCredentialsFunc
+	comp.NetrcFunc = nil                   // TODO create compiler.NetrcFunc and compiler.GlobalNetrcFunc
 	comp.PrivilegedFunc = compiler.DindFunc(*dind)
 	comp.SkipFunc = compiler.SkipFunc(
 		compiler.SkipData{
@@ -221,9 +225,10 @@ func runCompile() error {
 	comp.TransformFunc = transform.Combine(
 		transform.WithAuths(auths),
 		transform.WithEnviron(*environ),
+		transform.WithEnviron(defaultEnvs()),
 		transform.WithLables(*labels),
 		transform.WithLimits(int64(*memlimit), 0),
-		transform.WithNetrc(*username, *password, *machine),
+		transform.WithNetrc(*machine, *username, *password),
 		transform.WithNetworks(*network),
 		transform.WithProxy(),
 		transform.WithSecrets(*secrets),
@@ -231,7 +236,59 @@ func runCompile() error {
 	)
 	compiled := comp.Compile(p)
 
+	// // for drone-exec we will need to change the workspace
+	// // to a host volume mount, to the current working dir.
+	// for _, volume := range compiled.Docker.Volumes {
+	// 	if volume.Metadata.Name == "workspace" {
+	// 		volume.EmptyDir = nil
+	// 		volume.HostPath = &engine.VolumeHostPath{
+	// 			Path: "", // pwd
+	// 		}
+	// 		break
+	// 	}
+	// }
+	// // then we need to change the base mount for every container
+	// // to use the workspace base + path.
+	// for _, container := range compiled.Steps {
+	// 	for _, volume := range container.Volumes {
+	// 		if volume.Name == "workspace" {
+	// 			volume.Path = container.Envs["DRONE_WORKSPACE"]
+	// 		}
+	// 	}
+	// }
+
 	enc := json.NewEncoder(os.Stdout)
 	enc.SetIndent("", "  ")
 	return enc.Encode(compiled)
+}
+
+// helper function returns the git credential function,
+// used to return a git credentials file.
+func defaultCreds() []byte {
+	urls := *creds
+	if len(urls) == 0 {
+		return nil
+	}
+	var buf bytes.Buffer
+	for _, url := range urls {
+		buf.WriteString(url.String())
+		buf.WriteByte('\n')
+	}
+	return buf.Bytes()
+}
+
+// helper function returns the minimum required environment
+// variables to clone a repository. All other environment
+// variables should be passed via the --env flag.
+func defaultEnvs() map[string]string {
+	envs := map[string]string{}
+	envs["DRONE_COMMIT_BRANCH"] = *branch
+	envs["DRONE_COMMIT_SHA"] = *sha
+	envs["DRONE_COMMIT_REF"] = *ref
+	envs["DRONE_REMOTE_URL"] = *remote
+	envs["DRONE_BUILD_EVENT"] = *event
+	if strings.HasPrefix(*ref, "refs/tags/") {
+		envs["DRONE_TAG"] = strings.TrimPrefix(*ref, "refs/tags/")
+	}
+	return envs
 }
