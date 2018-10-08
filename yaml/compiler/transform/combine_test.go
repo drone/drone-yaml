@@ -7,7 +7,7 @@ import (
 	"github.com/google/go-cmp/cmp"
 )
 
-func TestWithEnviron(t *testing.T) {
+func TestCombine(t *testing.T) {
 	step := &engine.Step{
 		Metadata: engine.Metadata{
 			UID:  "1",
@@ -18,12 +18,15 @@ func TestWithEnviron(t *testing.T) {
 	spec := &engine.Spec{
 		Steps: []*engine.Step{step},
 	}
-	envs := map[string]string{
+	Combine(
+		WithEnviron(map[string]string{"GOOS": "linux"}),
+		WithEnviron(map[string]string{"GOARCH": "amd64"}),
+	)(spec)
+	want := map[string]string{
 		"GOOS":   "linux",
 		"GOARCH": "amd64",
 	}
-	WithEnviron(envs)(spec)
-	if diff := cmp.Diff(envs, step.Envs); diff != "" {
+	if diff := cmp.Diff(want, step.Envs); diff != "" {
 		t.Errorf("Unexpected transform")
 		t.Log(diff)
 	}

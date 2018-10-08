@@ -41,11 +41,11 @@ func setupCloneCredentials(spec *engine.Spec, dst *engine.Step, data []byte) {
 	if len(data) == 0 {
 		return
 	}
-	// TODO(bradrydzewski) ensure the paths are windows compatible.
-	dst.Envs["XDG_CONFIG_HOME"] = "/root/git/credentials"
+	// TODO(bradrydzewski) we may need to update the git
+	// clone plugin to configure the git credential store.
 	dst.Files = append(dst.Files, &engine.FileMount{
 		Name: ".git-credentials",
-		Path: "/root/git/credentials",
+		Path: "/root/.git-credentials",
 	})
 	spec.Files = append(spec.Files, &engine.File{
 		Name: ".git-credentials",

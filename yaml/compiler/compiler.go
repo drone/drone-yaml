@@ -9,7 +9,6 @@ import (
 	"github.com/dchest/uniuri"
 )
 
-// TODO(bradrydzewski) provide a default GitCredentialsFunc
 // TODO(bradrydzewski) handle depends_on (clone, services, etc)
 
 // random provides the default function used to

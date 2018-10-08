@@ -17,10 +17,10 @@ func WithProxy() func(*engine.Spec) {
 	}
 	if value := getenv("http_proxy"); value != "" {
 		environ["http_proxy"] = value
-		environ["http_proxy"] = value
+		environ["HTTP_PROXY"] = value
 	}
-	if value := getenv("HTTPS_PROXY"); value != "" {
-		environ["HTTPS_PROXY"] = value
+	if value := getenv("https_proxy"); value != "" {
+		environ["https_proxy"] = value
 		environ["HTTPS_PROXY"] = value
 	}
 	return WithEnviron(environ)

@@ -1,8 +1,6 @@
 package image
 
-import (
-	"testing"
-)
+import "testing"
 
 func Test_trimImage(t *testing.T) {
 	testdata := []struct {

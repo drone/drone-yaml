@@ -21,6 +21,7 @@ func WithVolumes(volumes map[string]string) func(*engine.Spec) {
 					Path: key,
 				},
 			}
+			spec.Docker.Volumes = append(spec.Docker.Volumes, volume)
 			for _, step := range spec.Steps {
 				mount := &engine.VolumeMount{
 					Name: volume.Metadata.Name,
