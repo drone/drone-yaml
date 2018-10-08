@@ -48,8 +48,10 @@ func toRunPolicy(from *yaml.Container) engine.RunPolicy {
 		return engine.RunAlways
 	case onFailure:
 		return engine.RunOnFailure
-	default:
+	case onSuccess:
 		return engine.RunOnSuccess
+	default:
+		return engine.RunNever
 	}
 }
 
