@@ -14,6 +14,9 @@ func Include(names []string) func(*engine.Spec) {
 			return
 		}
 		for _, step := range spec.Steps {
+			if step.Metadata.Name == "clone" {
+				continue
+			}
 			_, ok := set[step.Metadata.Name]
 			if !ok {
 				// if the step is not included in the
@@ -36,6 +39,9 @@ func Exclude(names []string) func(*engine.Spec) {
 			return
 		}
 		for _, step := range spec.Steps {
+			if step.Metadata.Name == "clone" {
+				continue
+			}
 			_, ok := set[step.Metadata.Name]
 			if ok {
 				// if the step is included in the blacklist
@@ -56,6 +62,9 @@ func ResumeAt(name string) func(*engine.Spec) {
 		for _, step := range spec.Steps {
 			if step.Metadata.Name == name {
 				return
+			}
+			if step.Metadata.Name == "clone" {
+				continue
 			}
 			step.RunPolicy = engine.RunNever
 		}

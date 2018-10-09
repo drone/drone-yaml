@@ -8,22 +8,22 @@ import (
 
 func TestInclude(t *testing.T) {
 	step1 := &engine.Step{
-		Metadata:  engine.Metadata{Name: "1"},
+		Metadata:  engine.Metadata{Name: "clone"},
 		RunPolicy: engine.RunOnSuccess,
 	}
 	step2 := &engine.Step{
-		Metadata:  engine.Metadata{Name: "2"},
+		Metadata:  engine.Metadata{Name: "build"},
 		RunPolicy: engine.RunOnSuccess,
 	}
 	step3 := &engine.Step{
-		Metadata:  engine.Metadata{Name: "3"},
+		Metadata:  engine.Metadata{Name: "test"},
 		RunPolicy: engine.RunOnSuccess,
 	}
 	spec := &engine.Spec{
 		Metadata: engine.Metadata{},
 		Steps:    []*engine.Step{step1, step2, step3},
 	}
-	Include([]string{"1", "3"})(spec)
+	Include([]string{"test"})(spec)
 	if got, want := step1.RunPolicy, engine.RunOnSuccess; got != want {
 		t.Errorf("Want run policy %s got %s", want, got)
 	}
@@ -52,23 +52,23 @@ func TestInclude_Empty(t *testing.T) {
 
 func TestExclude(t *testing.T) {
 	step1 := &engine.Step{
-		Metadata:  engine.Metadata{Name: "1"},
+		Metadata:  engine.Metadata{Name: "clone"},
 		RunPolicy: engine.RunOnSuccess,
 	}
 	step2 := &engine.Step{
-		Metadata:  engine.Metadata{Name: "2"},
+		Metadata:  engine.Metadata{Name: "build"},
 		RunPolicy: engine.RunOnSuccess,
 	}
 	step3 := &engine.Step{
-		Metadata:  engine.Metadata{Name: "3"},
+		Metadata:  engine.Metadata{Name: "test"},
 		RunPolicy: engine.RunOnSuccess,
 	}
 	spec := &engine.Spec{
 		Metadata: engine.Metadata{},
 		Steps:    []*engine.Step{step1, step2, step3},
 	}
-	Exclude([]string{"1", "3"})(spec)
-	if got, want := step1.RunPolicy, engine.RunNever; got != want {
+	Exclude([]string{"test"})(spec)
+	if got, want := step1.RunPolicy, engine.RunOnSuccess; got != want {
 		t.Errorf("Want run policy %s got %s", want, got)
 	}
 	if got, want := step2.RunPolicy, engine.RunOnSuccess; got != want {
@@ -96,26 +96,26 @@ func TestExclude_Empty(t *testing.T) {
 
 func TestResumeAt(t *testing.T) {
 	step1 := &engine.Step{
-		Metadata:  engine.Metadata{Name: "1"},
+		Metadata:  engine.Metadata{Name: "clone"},
 		RunPolicy: engine.RunOnSuccess,
 	}
 	step2 := &engine.Step{
-		Metadata:  engine.Metadata{Name: "2"},
+		Metadata:  engine.Metadata{Name: "build"},
 		RunPolicy: engine.RunOnSuccess,
 	}
 	step3 := &engine.Step{
-		Metadata:  engine.Metadata{Name: "3"},
+		Metadata:  engine.Metadata{Name: "test"},
 		RunPolicy: engine.RunOnSuccess,
 	}
 	spec := &engine.Spec{
 		Metadata: engine.Metadata{},
 		Steps:    []*engine.Step{step1, step2, step3},
 	}
-	ResumeAt("2")(spec)
-	if got, want := step1.RunPolicy, engine.RunNever; got != want {
+	ResumeAt("test")(spec)
+	if got, want := step1.RunPolicy, engine.RunOnSuccess; got != want {
 		t.Errorf("Want run policy %s got %s", want, got)
 	}
-	if got, want := step2.RunPolicy, engine.RunOnSuccess; got != want {
+	if got, want := step2.RunPolicy, engine.RunNever; got != want {
 		t.Errorf("Want run policy %s got %s", want, got)
 	}
 	if got, want := step3.RunPolicy, engine.RunOnSuccess; got != want {
