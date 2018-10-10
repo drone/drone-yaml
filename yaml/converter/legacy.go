@@ -4,7 +4,7 @@ import (
 	"regexp"
 )
 
-var re = regexp.MustCompile(`(?m)^pipeline:(\s+)$`)
+var re = regexp.MustCompile(`(?m)^pipeline:(\s+)?$`)
 
 // IsLegacy returns true if the yaml configuration file is
 // legacy and requires converstion.

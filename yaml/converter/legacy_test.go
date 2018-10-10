@@ -1,12 +1,18 @@
 package converter
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestLegacy(t *testing.T) {
 	tests := []struct {
 		config string
 		result bool
 	}{
+		{
+			config: "pipeline:\n  build:\n    image: golang:1.11",
+			result: true,
+		},
 		{
 			config: "\n\npipeline:\n",
 			result: true,
@@ -20,15 +26,15 @@ func TestLegacy(t *testing.T) {
 			result: false,
 		},
 	}
-	for _, test := range tests {
+	for i, test := range tests {
 		if got, want := IsLegacy(test.config), test.result; got != want {
-			t.Errorf("Want IsLegacy %v", want)
+			t.Errorf("Want IsLegacy %v at index %d,", want, i)
 		}
 	}
-	for _, test := range tests {
+	for i, test := range tests {
 		b := []byte(test.config)
 		if got, want := IsLegacyBytes(b), test.result; got != want {
-			t.Errorf("Want IsLegacyBytes %v", want)
+			t.Errorf("Want IsLegacyBytes %v at index %d,", want, i)
 		}
 	}
 }
