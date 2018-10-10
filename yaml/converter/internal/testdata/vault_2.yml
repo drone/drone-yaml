@@ -1,0 +1,11 @@
+pipeline:
+  docker:
+    image: plugins/docker
+    secrets: [ docker_username, docker_password ]
+    repo: octocat/hello-world
+
+secrets:
+  docker_username:
+    path: secret/docker/username
+  docker_password:
+    path: secret/docker/password
