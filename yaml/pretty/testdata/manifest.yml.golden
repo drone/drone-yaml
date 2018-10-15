@@ -42,9 +42,12 @@ data:
 
 ---
 kind: secret
+type: encrypted
 data:
-  password: YjgwNDc4ZDY4NmQzNzQzYjNkYmUwYmE3YjMwOTM2OWUK
-  username: N2NmYjA3ODQwNTY1ODFlY2E5MGJmOWI1NDk0NDFhMTEK
+  password: >
+    YjgwNDc4ZDY4NmQzNzQzYjNkYmUwYmE3YjMwOTM2OWUK
+  username: >
+    N2NmYjA3ODQwNTY1ODFlY2E5MGJmOWI1NDk0NDFhMTEK
 
 ---
 kind: cron
