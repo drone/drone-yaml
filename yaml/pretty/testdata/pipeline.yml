@@ -86,7 +86,7 @@ steps:
     GOOS: linux
     GOARCH: amd64
     SSH_KEY:
-      $secret: username
+      from_secret: username
   commands:
   - go get
   - go build

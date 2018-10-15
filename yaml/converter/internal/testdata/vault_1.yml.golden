@@ -14,9 +14,9 @@ steps:
     repo: octocat/hello-world
   environment:
     docker_password:
-      $secret: docker_password
+      from_secret: docker_password
     docker_username:
-      $secret: docker_username
+      from_secret: docker_username
 
 ---
 kind: secret

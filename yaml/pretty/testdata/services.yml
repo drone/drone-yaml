@@ -25,7 +25,7 @@ services:
   environment:
     MYSQL_USERNAME: root
     MYSQL_PASSWORD:
-      $secret: password
+      from_secret: password
 
 depends_on:
   - foo

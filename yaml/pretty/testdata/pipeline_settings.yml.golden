@@ -16,6 +16,6 @@ steps:
     - baz
     root: general
     token:
-      $secret: token
+      from_secret: token
 
 ...

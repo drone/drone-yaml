@@ -28,7 +28,7 @@ services:
   image: mysql:latest
   environment:
     MYSQL_PASSWORD:
-      $secret: password
+      from_secret: password
     MYSQL_USERNAME: root
   ports:
   - 3306

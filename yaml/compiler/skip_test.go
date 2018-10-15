@@ -82,19 +82,6 @@ func TestSkipFunc(t *testing.T) {
 			want: true,
 		},
 		//
-		// test status conditions
-		//
-		{
-			data: SkipData{Status: "success"},
-			when: yaml.Conditions{Status: yaml.Condition{Include: []string{"success"}}},
-			want: false,
-		},
-		{
-			data: SkipData{Status: "success"},
-			when: yaml.Conditions{Status: yaml.Condition{Exclude: []string{"success"}}},
-			want: true,
-		},
-		//
 		// test target conditions
 		//
 		{

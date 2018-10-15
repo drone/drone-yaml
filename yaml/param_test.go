@@ -17,7 +17,7 @@ func TestParam(t *testing.T) {
 			value: "bar",
 		},
 		{
-			yaml: "$secret: username",
+			yaml: "from_secret: username",
 			from: "username",
 		},
 	}
@@ -33,7 +33,7 @@ func TestParam(t *testing.T) {
 			t.Errorf("Want value %q, got %q", want, got)
 		}
 		if got, want := out.Secret, test.from; got != want {
-			t.Errorf("Want $secret %q, got %q", want, got)
+			t.Errorf("Want from_secret %q, got %q", want, got)
 		}
 	}
 }

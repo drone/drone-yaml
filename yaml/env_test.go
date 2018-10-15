@@ -17,7 +17,7 @@ func TestEnv(t *testing.T) {
 			value: "bar",
 		},
 		{
-			yaml: "$secret: username",
+			yaml: "from_secret: username",
 			from: "username",
 		},
 	}
@@ -33,7 +33,7 @@ func TestEnv(t *testing.T) {
 			t.Errorf("Want variable value %q, got %q", want, got)
 		}
 		if got, want := out.Secret, test.from; got != want {
-			t.Errorf("Want variable $secret %q, got %q", want, got)
+			t.Errorf("Want variable from_secret %q, got %q", want, got)
 		}
 	}
 }

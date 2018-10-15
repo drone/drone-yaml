@@ -6,7 +6,7 @@ steps:
   image: plugins/slack
   settings:
     token:
-      $secret: token
+      from_secret: token
     root: general
     labels:
     - foo
