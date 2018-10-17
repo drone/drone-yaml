@@ -132,6 +132,7 @@ func (c *Compiler) Compile(from *yaml.Pipeline) *engine.Spec {
 	if !from.Clone.Disable {
 		src := createClone(from)
 		dst := createStep(spec, src)
+		dst.Docker.PullPolicy = engine.PullIfNotExists
 		setupCloneDepth(from, dst)
 		setupCloneCredentials(spec, dst, c.gitCredentials())
 		setupWorkingDir(src, dst, workspace)
