@@ -254,3 +254,42 @@ func Test_matchHostname(t *testing.T) {
 		}
 	}
 }
+
+func Test_matchTag(t *testing.T) {
+	testdata := []struct {
+		a, b string
+		want bool
+	}{
+		{
+			a:    "golang:1.0",
+			b:    "golang:1.0",
+			want: true,
+		},
+		{
+			a:    "golang",
+			b:    "golang:latest",
+			want: true,
+		},
+		{
+			a:    "docker.io/library/golang",
+			b:    "golang:latest",
+			want: true,
+		},
+		{
+			a:    "golang",
+			b:    "golang:1.0",
+			want: false,
+		},
+		{
+			a:    "golang:1.0",
+			b:    "golang:2.0",
+			want: false,
+		},
+	}
+	for _, test := range testdata {
+		got, want := MatchTag(test.a, test.b), test.want
+		if got != want {
+			t.Errorf("Want image %q matching image tag %q is %v", test.a, test.b, want)
+		}
+	}
+}
