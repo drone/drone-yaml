@@ -49,8 +49,11 @@ func checkContainer(container *yaml.Container, trusted bool) error {
 	if err != nil {
 		return err
 	}
-	if container.Image == "" {
+	if container.Build == nil && container.Image == "" {
 		return errors.New("linter: invalid or missing image")
+	}
+	if container.Build != nil && container.Build.Image == "" {
+		return errors.New("linter: invalid or missing build image")
 	}
 	if container.Name == "" {
 		return errors.New("linter: invalid or missing name")

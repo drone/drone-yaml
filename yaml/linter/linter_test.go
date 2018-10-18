@@ -20,6 +20,11 @@ func TestLint(t *testing.T) {
 			invalid: false,
 		},
 		{
+			path:    "testdata/missing_build_image.yml",
+			invalid: true,
+			message: "linter: invalid or missing build image",
+		},
+		{
 			path:    "testdata/missing_image.yml",
 			invalid: true,
 			message: "linter: invalid or missing image",
