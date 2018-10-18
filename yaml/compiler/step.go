@@ -54,6 +54,13 @@ func createStep(spec *engine.Spec, src *yaml.Container) *engine.Step {
 
 	// appends the volumes to the container def.
 	for _, vol := range src.Volumes {
+		// the user should never be able to directly
+		// mount the docker socket. This should be
+		// restricted by the linter, but we place this
+		// check here just to be safe.
+		if vol.Name == "_docker_socket" {
+			continue
+		}
 		mount := &engine.VolumeMount{
 			Name: vol.Name,
 			Path: vol.MountPath,
@@ -162,6 +169,11 @@ func createBuildStep(spec *engine.Spec, src *yaml.Container) *engine.Step {
 		dst.Envs["DOCKER_BUILD_IMAGE"] = image.Expand(v)
 		dst.Envs["DOCKER_BUILD_IMAGE_ALIAS"] = image.Expand(alias)
 	}
+
+	dst.Volumes = append(dst.Volumes, &engine.VolumeMount{
+		Name: "_docker_socket",
+		Path: "/var/run/docker.sock",
+	})
 
 	return dst
 }

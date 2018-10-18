@@ -198,6 +198,24 @@ func (c *Compiler) Compile(from *yaml.Pipeline) *engine.Spec {
 		spec.Steps = append(spec.Steps, step)
 	}
 
+	// if the pipeline includes any build and publish
+	// steps we should create an entry for the host
+	// machine docker socket.
+	if spec.Docker != nil && len(rename) > 0 {
+		v := &engine.Volume{
+			Metadata: engine.Metadata{
+				UID:       c.random(),
+				Name:      "_docker_socket",
+				Namespace: namespace,
+				Labels:    map[string]string{},
+			},
+			HostPath: &engine.VolumeHostPath{
+				Path: "/var/run/docker.sock",
+			},
+		}
+		spec.Docker.Volumes = append(spec.Docker.Volumes, v)
+	}
+
 	// images created during the pipeline are assigned a
 	// random alias. All references to the origin image
 	// name must be changed to the alias.
