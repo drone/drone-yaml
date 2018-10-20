@@ -42,7 +42,7 @@ data:
 
 ---
 kind: secret
-type: encrypted
+type: general
 data:
   password: >
     YjgwNDc4ZDY4NmQzNzQzYjNkYmUwYmE3YjMwOTM2OWUK

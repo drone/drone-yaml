@@ -45,7 +45,7 @@ func TestConvert(t *testing.T) {
 			return
 		}
 		if bytes.Equal(b, c) == false {
-			t.Errorf("Unexpected yaml conversion")
+			t.Errorf("Unexpected yaml conversion of %s", test.before)
 			t.Log(string(c))
 		}
 	}
