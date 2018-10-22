@@ -57,7 +57,7 @@ func (c *Condition) Excludes(v string) bool {
 	return false
 }
 
-// UnmarshalYAML implements yml unmarhsaling.
+// UnmarshalYAML implements yml unmarshalling.
 func (c *Condition) UnmarshalYAML(unmarshal func(interface{}) error) error {
 	var out1 []string
 	var out2 = struct {
