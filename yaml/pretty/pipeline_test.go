@@ -20,6 +20,15 @@ func TestPipeline_Build_Long(t *testing.T) {
 	}
 }
 
+func TestPipeline_Concurrency(t *testing.T) {
+	ok, err := diff("testdata/pipeline_concurrency.yml")
+	if err != nil {
+		t.Error(err)
+	} else if !ok {
+		t.Errorf("Unepxected formatting")
+	}
+}
+
 func TestPipeline_Clone_Depth(t *testing.T) {
 	ok, err := diff("testdata/pipeline_clone_depth.yml")
 	if err != nil {
