@@ -3,9 +3,14 @@ package transform
 import (
 	"testing"
 
+	"github.com/google/go-cmp/cmp/cmpopts"
+
 	"github.com/drone/drone-runtime/engine"
 	"github.com/google/go-cmp/cmp"
 )
+
+var ignoreMetadata = cmpopts.IgnoreFields(
+	engine.Metadata{}, "UID")
 
 func TestWithNetrc(t *testing.T) {
 	step := &engine.Step{
@@ -15,6 +20,10 @@ func TestWithNetrc(t *testing.T) {
 		},
 	}
 	spec := &engine.Spec{
+		Metadata: engine.Metadata{
+			UID:       "acdj0yjqv7uh5hidveg0ggr42x8oj67b",
+			Namespace: "pivqfthg1c9hy83ylht1sxx4nygjc7tk",
+		},
 		Steps: []*engine.Step{step},
 	}
 	WithNetrc("@machine", "@username", "@password")(spec)
@@ -27,16 +36,19 @@ func TestWithNetrc(t *testing.T) {
 		return
 	}
 	file := &engine.File{
-		Name: ".netrc",
+		Metadata: engine.Metadata{
+			Name:      ".netrc",
+			Namespace: "pivqfthg1c9hy83ylht1sxx4nygjc7tk",
+		},
 		Data: []byte("machine @machine login @username password @password"),
 	}
-	if diff := cmp.Diff(file, spec.Files[0]); diff != "" {
+	if diff := cmp.Diff(file, spec.Files[0], ignoreMetadata); diff != "" {
 		t.Errorf("Unexpected file declaration")
 		t.Log(diff)
 	}
 
 	fileMount := &engine.FileMount{Name: ".netrc", Path: "/root/.netrc", Mode: 0600}
-	if diff := cmp.Diff(fileMount, step.Files[0]); diff != "" {
+	if diff := cmp.Diff(fileMount, step.Files[0], ignoreMetadata); diff != "" {
 		t.Errorf("Unexpected file mount")
 		t.Log(diff)
 	}

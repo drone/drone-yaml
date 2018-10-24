@@ -16,6 +16,10 @@ func TestWithSecret(t *testing.T) {
 		Envs: map[string]string{},
 	}
 	spec := &engine.Spec{
+		Metadata: engine.Metadata{
+			UID:       "acdj0yjqv7uh5hidveg0ggr42x8oj67b",
+			Namespace: "pivqfthg1c9hy83ylht1sxx4nygjc7tk",
+		},
 		Steps: []*engine.Step{step},
 	}
 	secrets := map[string]string{
@@ -25,11 +29,14 @@ func TestWithSecret(t *testing.T) {
 
 	want := []*engine.Secret{
 		{
-			Name: "password",
+			Metadata: engine.Metadata{
+				Name:      "password",
+				Namespace: "pivqfthg1c9hy83ylht1sxx4nygjc7tk",
+			},
 			Data: "correct-horse-battery-staple",
 		},
 	}
-	if diff := cmp.Diff(want, spec.Secrets); diff != "" {
+	if diff := cmp.Diff(want, spec.Secrets, ignoreMetadata); diff != "" {
 		t.Errorf("Unexpected secret transform")
 		t.Log(diff)
 	}
@@ -50,6 +57,10 @@ func TestWithSecretFunc(t *testing.T) {
 		},
 	}
 	spec := &engine.Spec{
+		Metadata: engine.Metadata{
+			UID:       "acdj0yjqv7uh5hidveg0ggr42x8oj67b",
+			Namespace: "pivqfthg1c9hy83ylht1sxx4nygjc7tk",
+		},
 		Steps: []*engine.Step{
 			step,
 			// this is a step that requests a secret
@@ -72,7 +83,9 @@ func TestWithSecretFunc(t *testing.T) {
 			return nil
 		}
 		return &engine.Secret{
-			Name: "password",
+			Metadata: engine.Metadata{
+				Name: "password",
+			},
 			Data: "correct-horse-battery-staple",
 		}
 	}
@@ -80,11 +93,14 @@ func TestWithSecretFunc(t *testing.T) {
 
 	want := []*engine.Secret{
 		{
-			Name: "password",
+			Metadata: engine.Metadata{
+				Name:      "password",
+				Namespace: "pivqfthg1c9hy83ylht1sxx4nygjc7tk",
+			},
 			Data: "correct-horse-battery-staple",
 		},
 	}
-	if diff := cmp.Diff(want, spec.Secrets); diff != "" {
+	if diff := cmp.Diff(want, spec.Secrets, ignoreMetadata); diff != "" {
 		t.Errorf("Unexpected secret transform")
 		t.Log(diff)
 	}
