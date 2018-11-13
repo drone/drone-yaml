@@ -53,7 +53,7 @@ func TestLint(t *testing.T) {
 			path:    "testdata/volume_host_path.yml",
 			trusted: false,
 			invalid: true,
-			message: "linter: untrusted repsitories cannot mount host volumes",
+			message: "linter: untrusted repositories cannot mount host volumes",
 		},
 		{
 			path:    "testdata/volume_host_path.yml",
@@ -74,7 +74,7 @@ func TestLint(t *testing.T) {
 			path:    "testdata/volume_empty_dir_memory.yml",
 			trusted: false,
 			invalid: true,
-			message: "linter: untrusted repsitories cannot mount in-memory volumes",
+			message: "linter: untrusted repositories cannot mount in-memory volumes",
 		},
 		{
 			path:    "testdata/volume_empty_dir_memory.yml",
