@@ -12,6 +12,22 @@ func TestConstraintMatch(t *testing.T) {
 		with string
 		want bool
 	}{
+		// string value
+		{
+			conf: "master",
+			with: "develop",
+			want: false,
+		},
+		{
+			conf: "master",
+			with: "master",
+			want: true,
+		},
+		{
+			conf: "feature/*",
+			with: "feature/foo",
+			want: true,
+		},
 		// slice value
 		{
 			conf: "[ master, feature/* ]",
