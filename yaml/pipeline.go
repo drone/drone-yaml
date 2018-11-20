@@ -49,7 +49,7 @@ type (
 		DNS         []string              `json:"dns,omitempty"`
 		DNSSearch   []string              `json:"dns_search,omitempty" yaml:"dns_search"`
 		Entrypoint  []string              `json:"entrypoint,omitempty"`
-		Environment map[string]*Variable  `json:"environment,omitempty"`
+		Environment map[string]*Parameter  `json:"environment,omitempty"`
 		ExtraHosts  []string              `json:"extra_hosts,omitempty" yaml:"extra_hosts"`
 		Failure     string                `json:"failure,omitempty"`
 		Image       string                `json:"image,omitempty"`

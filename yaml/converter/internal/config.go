@@ -143,15 +143,15 @@ func toConditions(from Constraints) droneyaml.Conditions {
 
 // helper function converts the legacy environment syntax
 // to the new environment syntax.
-func toEnvironment(from *Container) map[string]*droneyaml.Variable {
-	envs := map[string]*droneyaml.Variable{}
+func toEnvironment(from *Container) map[string]*droneyaml.Parameter {
+	envs := map[string]*droneyaml.Parameter{}
 	for key, val := range from.Environment.Map {
-		envs[key] = &droneyaml.Variable{
+		envs[key] = &droneyaml.Parameter{
 			Value: val,
 		}
 	}
 	for _, val := range from.Secrets.Secrets {
-		envs[val.Target] = &droneyaml.Variable{
+		envs[val.Target] = &droneyaml.Parameter{
 			Secret: val.Source,
 		}
 	}

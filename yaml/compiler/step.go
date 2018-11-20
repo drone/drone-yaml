@@ -79,7 +79,7 @@ func createStep(spec *engine.Spec, src *yaml.Container) *engine.Step {
 			}
 			dst.Secrets = append(dst.Secrets, sec)
 		} else {
-			dst.Envs[key] = value.Value
+			dst.Envs[key] = encode(value.Value)
 		}
 	}
 

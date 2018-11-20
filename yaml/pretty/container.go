@@ -97,7 +97,7 @@ func printDeviceMounts(w writer, v []*yaml.VolumeDevice) {
 }
 
 // helper function pretty prints the environment mapping.
-func printEnviron(w writer, v map[string]*yaml.Variable) {
+func printEnviron(w writer, v map[string]*yaml.Parameter) {
 	var keys []string
 	for k := range v {
 		keys = append(keys, k)

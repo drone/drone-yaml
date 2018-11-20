@@ -32,7 +32,7 @@ func TestDind(t *testing.T) {
 		{
 			container: &yaml.Container{
 				Image: "plugins/docker",
-				Environment: map[string]*yaml.Variable{
+				Environment: map[string]*yaml.Parameter{
 					"HTTPS_PROXY": {Value: "https://evil.io"},
 				},
 			},
