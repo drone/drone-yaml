@@ -1,0 +1,20 @@
+---
+kind: pipeline
+name: default
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /go
+  path: src/github.com/drone/drone-yaml
+
+steps:
+- name: test
+  image: golang
+  commands:
+  - go get -t -v ./...
+  - go test ./...
+
+...
