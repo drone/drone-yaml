@@ -28,13 +28,18 @@ func TestDind(t *testing.T) {
 			container:  &yaml.Container{Image: "golang"},
 			privileged: false,
 		},
-		// dind containers cannot set environment
+		// dind containers cannot set entrypoint or command
 		{
 			container: &yaml.Container{
-				Image: "plugins/docker",
-				Environment: map[string]*yaml.Variable{
-					"HTTPS_PROXY": {Value: "https://evil.io"},
-				},
+				Image:   "plugins/docker",
+				Command: []string{"docker run ..."},
+			},
+			privileged: false,
+		},
+		{
+			container: &yaml.Container{
+				Image:      "plugins/docker",
+				Entrypoint: []string{"docker run ..."},
 			},
 			privileged: false,
 		},

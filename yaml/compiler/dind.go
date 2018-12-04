@@ -19,9 +19,11 @@ func DindFunc(images []string) func(*yaml.Container) bool {
 		}
 		// privileged-by-default containers are only
 		// enabled for plugins steps that do not define
-		// custom environment variables. This restriction
-		// MAY be lifted in the future.
-		if len(container.Environment) > 0 {
+		// custom command or entrypoint.
+		if len(container.Command) > 0 {
+			return false
+		}
+		if len(container.Entrypoint) > 0 {
 			return false
 		}
 		// if the container image matches any image
