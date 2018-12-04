@@ -13,13 +13,10 @@ func DindFunc(images []string) func(*yaml.Container) bool {
 	return func(container *yaml.Container) bool {
 		// privileged-by-default containers are only
 		// enabled for plugins steps that do not define
-		// commands.
+		// commands, command, or entrypoint.
 		if len(container.Commands) > 0 {
 			return false
 		}
-		// privileged-by-default containers are only
-		// enabled for plugins steps that do not define
-		// custom command or entrypoint.
 		if len(container.Command) > 0 {
 			return false
 		}
