@@ -41,6 +41,9 @@ func ConvertBytes(d []byte) ([]byte, error) {
 	pipeline.Name = "default"
 	pipeline.Kind = "pipeline"
 
+	pipeline.Workspace.Base = from.Workspace.Base
+	pipeline.Workspace.Path = from.Workspace.Path
+
 	if len(from.Clone.Containers) != 0 {
 		pipeline.Clone.Disable = true
 		for _, container := range from.Clone.Containers {
