@@ -244,7 +244,7 @@ func toVolumes(from *Config) []*droneyaml.Volume {
 			to = append(to, &droneyaml.Volume{
 				Name: name,
 				HostPath: &droneyaml.VolumeHostPath{
-					Path: v.Destination,
+					Path: v.Source,
 				},
 			})
 		}

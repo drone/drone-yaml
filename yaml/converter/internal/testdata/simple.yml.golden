@@ -67,7 +67,7 @@ services:
 volumes:
 - name: 2f746d702f676f
   host:
-    path: /go/bin
+    path: /tmp/go
 
 trigger:
   branch:
