@@ -20,6 +20,18 @@ func TestLint(t *testing.T) {
 			invalid: false,
 		},
 		{
+			path:    "testdata/invalid_os.yml",
+			trusted: false,
+			invalid: true,
+			message: "linter: unsupported os: openbsd",
+		},
+		{
+			path:    "testdata/invalid_arch.yml",
+			trusted: false,
+			invalid: true,
+			message: "linter: unsupported architecture: s390x",
+		},
+		{
 			path:    "testdata/missing_build_image.yml",
 			invalid: true,
 			message: "linter: invalid or missing build image",

@@ -7,6 +7,17 @@ import (
 	"github.com/drone/drone-yaml/yaml"
 )
 
+var os = map[string]struct{}{
+	"linux":   struct{}{},
+	"windows": struct{}{},
+}
+
+var arch = map[string]struct{}{
+	"arm":   struct{}{},
+	"arm64": struct{}{},
+	"amd64": struct{}{},
+}
+
 // Lint performs lint operations for a resource.
 func Lint(resource yaml.Resource, trusted bool) error {
 	switch v := resource.(type) {
@@ -30,6 +41,10 @@ func checkPipeline(pipeline *yaml.Pipeline, trusted bool) error {
 	if err != nil {
 		return err
 	}
+	err = checkPlatform(pipeline.Platform)
+	if err != nil {
+		return err
+	}
 	for _, container := range pipeline.Steps {
 		err := checkContainer(container, trusted)
 		if err != nil {
@@ -40,6 +55,22 @@ func checkPipeline(pipeline *yaml.Pipeline, trusted bool) error {
 		err := checkContainer(container, trusted)
 		if err != nil {
 			return err
+		}
+	}
+	return nil
+}
+
+func checkPlatform(platform yaml.Platform) error {
+	if v := platform.OS; v != "" {
+		_, ok := os[v]
+		if !ok {
+			return fmt.Errorf("linter: unsupported os: %s", v)
+		}
+	}
+	if v := platform.Arch; v != "" {
+		_, ok := arch[v]
+		if !ok {
+			return fmt.Errorf("linter: unsupported architecture: %s", v)
 		}
 	}
 	return nil

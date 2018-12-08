@@ -1,34 +1,23 @@
 ---
 kind: pipeline
-name: amd64
+name: default
 
 steps:
-- name: test
+- name: build
   image: golang
   commands:
   - go build
   - go test
-
-services:
-- name: database
-  image: redis
-  ports:
-  - 6379
 
 ---
 kind: pipeline
-name: arm
-
-platform:
-  arch: arm
+name: default
 
 steps:
-- name: test
+- name: build
   image: golang
   commands:
   - go build
   - go test
 
-depends_on:
-- amd64
 ...

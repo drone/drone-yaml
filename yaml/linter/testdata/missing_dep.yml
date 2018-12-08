@@ -30,5 +30,5 @@ steps:
   - go test
 
 depends_on:
-- amd64
+- foo
 ...

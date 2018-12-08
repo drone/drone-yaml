@@ -1,0 +1,14 @@
+---
+kind: pipeline
+name: linux
+
+platform:
+  os: linux
+  arch: s390x
+
+steps:
+- name: build
+  image: golang
+  commands:
+  - go build
+  - go test
