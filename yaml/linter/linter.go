@@ -18,6 +18,10 @@ var arch = map[string]struct{}{
 	"amd64": struct{}{},
 }
 
+// ErrDuplicateStepName is returned when two Pipeline steps
+// have the same name.
+var ErrDuplicateStepName = errors.New("linter: duplicate step names")
+
 // Lint performs lint operations for a resource.
 func Lint(resource yaml.Resource, trusted bool) error {
 	switch v := resource.(type) {
@@ -45,13 +49,26 @@ func checkPipeline(pipeline *yaml.Pipeline, trusted bool) error {
 	if err != nil {
 		return err
 	}
+	names := map[string]struct{}{}
 	for _, container := range pipeline.Steps {
+		_, ok := names[container.Name]
+		if ok {
+			return ErrDuplicateStepName
+		}
+		names[container.Name] = struct{}{}
+
 		err := checkContainer(container, trusted)
 		if err != nil {
 			return err
 		}
 	}
 	for _, container := range pipeline.Services {
+		_, ok := names[container.Name]
+		if ok {
+			return ErrDuplicateStepName
+		}
+		names[container.Name] = struct{}{}
+
 		err := checkContainer(container, trusted)
 		if err != nil {
 			return err

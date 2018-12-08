@@ -3,10 +3,14 @@ kind: pipeline
 name: amd64
 
 steps:
-- name: test
+- name: build
   image: golang
   commands:
   - go build
+
+- name: test
+  image: golang
+  commands:
   - go test
 
 services:

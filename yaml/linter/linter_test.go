@@ -189,6 +189,18 @@ func TestLint(t *testing.T) {
 			trusted: true,
 			invalid: false,
 		},
+		// user should not be able to use duplicate names
+		// for steps or services.
+		{
+			path:    "testdata/duplicate_step.yml",
+			invalid: true,
+			message: "linter: duplicate step names",
+		},
+		{
+			path:    "testdata/duplicate_step_service.yml",
+			invalid: true,
+			message: "linter: duplicate step names",
+		},
 	}
 	for _, test := range tests {
 		name := path.Base(test.path)
