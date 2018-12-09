@@ -7,8 +7,6 @@ import (
 	"github.com/drone/drone-yaml/yaml/compiler/internal/rand"
 )
 
-// TODO(bradrydzewski) handle depends_on (clone, services, etc)
-
 // A Compiler compiles the pipeline configuration to an
 // intermediate representation that can be executed by
 // the Drone runtime engine.
@@ -153,6 +151,12 @@ func (c *Compiler) Compile(from *yaml.Pipeline) *engine.Spec {
 		if c.privileged(service) {
 			step.Docker.Privileged = true
 		}
+		// if the clone step is enabled, the service should
+		// not start until the clone step is complete. Add
+		// the clone step as a dependency in the graph.
+		if !from.Clone.Disable {
+			step.DependsOn = append(step.DependsOn, cloneStepName)
+		}
 		spec.Steps = append(spec.Steps, step)
 	}
 
@@ -184,6 +188,13 @@ func (c *Compiler) Compile(from *yaml.Pipeline) *engine.Spec {
 		// in privileged mode, set the privileged flag.
 		if c.privileged(container) {
 			step.Docker.Privileged = true
+		}
+		// if the clone step is enabled, the step should
+		// not start until the clone step is complete. If
+		// no dependencies are defined, at a minimum, the
+		// step depends on the initial clone step completing.
+		if !from.Clone.Disable && len(step.DependsOn) == 0 {
+			step.DependsOn = append(step.DependsOn, cloneStepName)
 		}
 		spec.Steps = append(spec.Steps, step)
 	}

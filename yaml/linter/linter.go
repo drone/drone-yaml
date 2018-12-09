@@ -22,6 +22,15 @@ var arch = map[string]struct{}{
 // have the same name.
 var ErrDuplicateStepName = errors.New("linter: duplicate step names")
 
+// ErrMissingDependency is returned when a Pipeline step
+// defines dependencies that are invlid or unknown.
+var ErrMissingDependency = errors.New("linter: invalid or unknown step dependency")
+
+// ErrCyclicalDependency is returned when a Pipeline step
+// defines a cyclical dependency, which would result in an
+// infinite execution loop.
+var ErrCyclicalDependency = errors.New("linter: cyclical step dependency detected")
+
 // Lint performs lint operations for a resource.
 func Lint(resource yaml.Resource, trusted bool) error {
 	switch v := resource.(type) {
@@ -58,6 +67,11 @@ func checkPipeline(pipeline *yaml.Pipeline, trusted bool) error {
 		names[container.Name] = struct{}{}
 
 		err := checkContainer(container, trusted)
+		if err != nil {
+			return err
+		}
+
+		err = checkDeps(container, names)
 		if err != nil {
 			return err
 		}
@@ -180,6 +194,19 @@ func checkHostPathVolume(volume *yaml.VolumeHostPath, trusted bool) error {
 func checkEmptyDirVolume(volume *yaml.VolumeEmptyDir, trusted bool) error {
 	if trusted == false && volume.Medium == "memory" {
 		return errors.New("linter: untrusted repositories cannot mount in-memory volumes")
+	}
+	return nil
+}
+
+func checkDeps(container *yaml.Container, deps map[string]struct{}) error {
+	for _, dep := range container.DependsOn {
+		_, ok := deps[dep]
+		if !ok {
+			return ErrMissingDependency
+		}
+		if container.Name == dep {
+			return ErrCyclicalDependency
+		}
 	}
 	return nil
 }
