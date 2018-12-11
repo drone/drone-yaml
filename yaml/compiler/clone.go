@@ -62,6 +62,9 @@ func setupCloneCredentials(spec *engine.Spec, dst *engine.Step, data []byte) {
 // for the clone stage. The clone stage is automatically
 // added to each pipeline.
 func createClone(src *yaml.Pipeline) *yaml.Container {
+	if src.Clone.Container != nil {
+		return src.Clone.Container
+	}
 	return &yaml.Container{
 		Name:  cloneStepName,
 		Image: cloneImage(src),

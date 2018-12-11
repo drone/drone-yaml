@@ -1,11 +1,49 @@
 package compiler
 
 import (
+	"reflect"
 	"testing"
 
 	"github.com/drone/drone-runtime/engine"
 	"github.com/drone/drone-yaml/yaml"
 )
+
+func TestCloneContainer(t *testing.T) {
+	tests := []struct {
+		pipeline yaml.Pipeline
+		expected yaml.Container
+	}{
+		{
+			pipeline: yaml.Pipeline{},
+			expected: yaml.Container{
+				Name:  cloneStepName,
+				Image: "drone/git",
+			},
+		},
+		{
+			pipeline: yaml.Pipeline{
+				Clone: yaml.Clone{
+					Container: &yaml.Container{
+						Name:  "custom-clone",
+						Image: "janecitizen/clone",
+						Pull:  "always",
+					},
+				},
+			},
+			expected: yaml.Container{
+				Name:  "custom-clone",
+				Image: "janecitizen/clone",
+				Pull:  "always",
+			},
+		},
+	}
+	for _, test := range tests {
+		got := *createClone(&test.pipeline)
+		if !reflect.DeepEqual(got, test.expected) {
+			t.Errorf("expected %v but got %v", test.expected, got)
+		}
+	}
+}
 
 func TestCloneImage(t *testing.T) {
 	tests := []struct {
