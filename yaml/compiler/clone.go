@@ -63,7 +63,8 @@ func setupCloneCredentials(spec *engine.Spec, dst *engine.Step, data []byte) {
 // added to each pipeline.
 func createClone(src *yaml.Pipeline) *yaml.Container {
 	if src.Clone.Container != nil {
-		return src.Clone.Container
+		container := *src.Clone.Container
+		return &container
 	}
 	return &yaml.Container{
 		Name:  cloneStepName,
