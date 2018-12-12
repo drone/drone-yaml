@@ -13,10 +13,10 @@ steps:
   - go build
   resources:
     limits:
-      cpu: 200m
+      cpu: 2000
       memory: 100MiB
     requests:
-      cpu: 100m
+      cpu: 100
       memory: 50MiB
 
 ...

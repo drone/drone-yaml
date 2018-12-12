@@ -132,6 +132,9 @@ func (w *indexWriter) WriteTagValue(k, v interface{}) {
 	}
 	w.WriteTag(k)
 	if isPrimative(v) {
+		if k == "cpu" {
+			log.Printf("%s", v)
+		}
 		w.WriteByte(' ')
 		writeValue(w, v)
 	} else if isSlice(v) {
@@ -201,6 +204,8 @@ func writeValue(w writer, v interface{}) {
 	case map[string]string:
 		writeMappingStr(w, v)
 	case yaml.BytesSize:
+		writeValue(w, v.String())
+	case yaml.MilliSize:
 		writeValue(w, v.String())
 	}
 }

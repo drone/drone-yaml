@@ -160,6 +160,7 @@ var (
 	password   = compile.Flag("netrc-password", "netrc password").PlaceHolder("x-oauth-basic").String()
 	machine    = compile.Flag("netrc-machine", "netrc machine").PlaceHolder("github.com").String()
 	memlimit   = compile.Flag("mem-limit", "memory limit").PlaceHolder("1GB").Bytes()
+	cpulimit   = compile.Flag("cpu-limit", "cpu limit").PlaceHolder("2").Int64()
 )
 
 func runCompile() error {
@@ -227,7 +228,7 @@ func runCompile() error {
 		transform.WithEnviron(*environ),
 		transform.WithEnviron(defaultEnvs()),
 		transform.WithLables(*labels),
-		transform.WithLimits(int64(*memlimit), 0),
+		transform.WithLimits(int64(*memlimit), int64(*cpulimit)),
 		transform.WithNetrc(*machine, *username, *password),
 		transform.WithNetworks(*network),
 		transform.WithProxy(),

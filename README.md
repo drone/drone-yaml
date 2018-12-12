@@ -29,5 +29,5 @@ $ drone-yaml verify 642909eb4c3d47e33999235c0598353c samples/simple.yml
 Compile the yaml file:
 
 ```text
-$ drone-yaml compile samples/simple.yml samples/simple.json
+$ drone-yaml compile samples/simple.yml > samples/simple.json
 ```
