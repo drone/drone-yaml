@@ -132,9 +132,6 @@ func (w *indexWriter) WriteTagValue(k, v interface{}) {
 	}
 	w.WriteTag(k)
 	if isPrimative(v) {
-		if k == "cpu" {
-			log.Printf("%s", v)
-		}
 		w.WriteByte(' ')
 		writeValue(w, v)
 	} else if isSlice(v) {
