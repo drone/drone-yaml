@@ -1,0 +1,9 @@
+---
+kind: pipeline
+name: linux
+
+steps:
+- name: test
+  commands:
+  - go build
+  - go test

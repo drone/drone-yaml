@@ -1,0 +1,13 @@
+---
+kind: pipeline
+name: linux
+
+platform:
+  os: openbsd
+
+steps:
+- name: build
+  image: golang
+  commands:
+  - go build
+  - go test

@@ -1,0 +1,34 @@
+---
+kind: pipeline
+name: test2.1
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: test2.1
+  image: ruby:2.1
+  commands:
+  - bundle install
+  - bundle exec rake spec
+
+---
+kind: pipeline
+name: test2.2
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: test2.2
+  image: ruby:2.2
+  commands:
+  - bundle install
+  - bundle exec rake spec
+
+depends_on:
+- test2.1
+
+...

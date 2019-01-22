@@ -1,0 +1,12 @@
+---
+kind: pipeline
+name: default
+
+concurrency:
+  limit: 1
+
+steps:
+- name: webhook
+  image: alpine
+  commands:
+  - curl -x POST http://abc.com:80/~smith/home.html

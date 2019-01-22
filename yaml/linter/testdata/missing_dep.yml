@@ -1,0 +1,34 @@
+---
+kind: pipeline
+name: amd64
+
+steps:
+- name: test
+  image: golang
+  commands:
+  - go build
+  - go test
+
+services:
+- name: database
+  image: redis
+  ports:
+  - 6379
+
+---
+kind: pipeline
+name: arm
+
+platform:
+  arch: arm
+
+steps:
+- name: test
+  image: golang
+  commands:
+  - go build
+  - go test
+
+depends_on:
+- foo
+...

@@ -1,0 +1,40 @@
+---
+kind: pipeline
+name: default
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: test
+  image: golang
+  commands:
+  - go build
+  - go test -v
+
+services:
+- name: redis
+  image: redis:localhost
+  entrypoint:
+  - /bin/redis-server
+  command:
+  - --port
+  - 6380
+  ports:
+  - 6379
+
+- name: mysql
+  image: mysql:latest
+  environment:
+    MYSQL_PASSWORD:
+      from_secret: password
+    MYSQL_USERNAME: root
+  ports:
+  - 3306
+
+depends_on:
+- foo
+- bar
+
+...

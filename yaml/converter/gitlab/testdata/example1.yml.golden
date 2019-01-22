@@ -1,0 +1,20 @@
+---
+kind: pipeline
+name: test
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: test
+  image: ruby:2.2
+  commands:
+  - bundle install
+  - bundle exec rake spec
+
+services:
+- name: postgres-9-3
+  image: postgres:9.3
+
+...

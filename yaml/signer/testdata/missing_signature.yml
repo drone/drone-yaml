@@ -1,0 +1,12 @@
+---
+kind: pipeline
+name: default
+
+pipeline:
+- name: build
+  image: golang
+  commands:
+  - go build
+  - go test
+
+...

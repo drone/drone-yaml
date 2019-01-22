@@ -1,0 +1,40 @@
+pipelines:
+  branches:
+    feature/*:
+      - step:
+          name: Test
+          image: node:latest
+          script:
+            - npm install
+            - npm test
+  default:
+    - step:
+        name: Build and test
+        image: node:8.5.0
+        caches:
+          - node
+        script:
+          - npm install
+          - npm test
+          - npm build
+        artifacts:
+          - dist/**
+    - step:
+        name: Integration test
+        image: node:8.5.0
+        caches:
+          - node
+        services:
+          - postgres
+        script:
+          - npm run integration-test
+    - step:
+        name: Deploy to beanstalk
+        image: python:3.5.1
+        script:
+          - python deploy-to-beanstalk.py
+ 
+definitions:
+  services:
+    postgres:
+      image: postgres:9.6.4

@@ -1,0 +1,64 @@
+---
+kind: pipeline
+name: default
+
+clone:
+  disable: true
+  depth: 50
+
+platform:
+  os: linux
+  arch: arm64
+  variant: 7
+  version: 1803
+
+steps:
+- name: build
+  image: golang
+  commands:
+  - go get
+  - go build
+
+- name: test
+  image: golang
+  commands:
+  - go test -v
+
+trigger:
+  status:
+  - success
+  branch:
+  - master
+  - develop
+
+depends_on:
+- foo
+- bar
+
+---
+kind: registry
+data:
+  index.docker.io: N2NmYjA3ODQwNTY1ODFlY2E5MGJmOWI1NDk0NDFhMTEK
+
+---
+kind: secret
+type: general
+data:
+  username: N2NmYjA3ODQwNTY1ODFlY2E5MGJmOWI1NDk0NDFhMTEK
+  password: YjgwNDc4ZDY4NmQzNzQzYjNkYmUwYmE3YjMwOTM2OWUK
+
+---
+kind: cron
+name: nightly
+
+spec:
+  schedule: "1 * * * *"
+  branch: master
+  deployment:
+    target: production
+
+---
+kind: signature
+hmac: N2NmYjA3ODQwNTY1ODFlY2E5MGJmOWI1NDk0NDFhMTEK
+
+...

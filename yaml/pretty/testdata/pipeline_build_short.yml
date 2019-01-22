@@ -1,0 +1,7 @@
+---
+kind: pipeline
+name: default
+
+steps:
+- name: test_build
+  build: octocat/hello-world

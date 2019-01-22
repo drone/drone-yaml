@@ -1,0 +1,71 @@
+kind: pipeline
+name: build
+
+steps:
+- name: backend
+  image: golang:1.11
+  commands:
+  - go build
+  - go test -v
+
+- name: frontend
+  image: node
+  commands:
+    - npm install
+    - npm run test
+    - npm run lint
+
+services:
+- name: redis
+  image: redis:latest
+  ports:
+  - 6379
+  volumes:
+  - name: foo
+    path: /bar
+
+volumes:
+- name: foo
+  temp: {}
+
+---
+kind: pipeline
+name: notify
+
+steps:
+- name: notify
+  image: plugins/slack
+  settings:
+    room: general
+    token:
+      $secret: token
+
+node:
+  disk: ssd
+
+depends_on:
+- build
+
+---
+kind: cron
+name: nightly
+spec:
+  schedule: "1 * * * *"
+  branch: master
+  deployment:
+    target: production
+
+---
+kind: secret
+type: encrypted
+
+data:
+  token: N2NmYjA3ODQwNTY1ODFlY2E5MGJmOWI1NDk0NDFhMTEK
+
+---
+kind: registry
+type: encrypted
+
+data:
+  index.drone.io: N2NmYjA3ODQwNTY1ODFlY2E5MGJmOWI1NDk0NDFhMTEK
+

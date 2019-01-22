@@ -1,0 +1,30 @@
+---
+kind: pipeline
+name: default
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: docker
+  pull: default
+  image: plugins/docker
+  settings:
+    repo: octocat/hello-world
+  environment:
+    DOCKER_PASSWORD:
+      from_secret: docker_password
+    DOCKER_USERNAME:
+      from_secret: docker_username
+
+---
+kind: secret
+type: general
+external_data:
+  docker_password:
+    path: secret/docker/password
+  docker_username:
+    path: secret/docker/username
+
+...

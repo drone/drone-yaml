@@ -1,0 +1,11 @@
+image: ruby:2.2
+
+services:
+  - postgres:9.3
+
+before_script:
+  - bundle install
+
+test:
+  script:
+  - bundle exec rake spec

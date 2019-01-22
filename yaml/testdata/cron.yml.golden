@@ -1,0 +1,13 @@
+[
+  {
+    "kind": "cron",
+    "name": "nightly",
+    "spec": {
+      "schedule": "1 * * * *",
+      "branch": "master",
+      "deployment": {
+        "target": "production"
+      }
+    }
+  }
+]

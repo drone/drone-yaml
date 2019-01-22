@@ -1,0 +1,16 @@
+before_script:
+  - bundle install
+
+test2.1:
+  image: ruby:2.1
+  services:
+  - postgres:9.3
+  script:
+  - bundle exec rake spec
+
+test2.2:
+  image: ruby:2.2
+  services:
+  - postgres:9.4
+  script:
+  - bundle exec rake spec

@@ -1,0 +1,76 @@
+---
+kind: pipeline
+name: default
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /go
+  path: src/github.com/octocat/hello-world
+
+steps:
+- name: build
+  pull: default
+  image: golang
+  commands:
+  - go get
+  - go build
+  environment:
+    GOARCH: amd64
+    GOOS: linux
+  volumes:
+  - name: 2f746d702f676f
+    path: /go/bin
+
+- name: test
+  pull: default
+  image: golang:latest
+  commands:
+  - go test -v
+  volumes:
+  - name: 2f746d702f676f
+    path: /go/bin
+
+- name: docker
+  pull: default
+  image: plugins/docker
+  settings:
+    repo: octocat/hello-world
+  environment:
+    DOCKER_PASSWORD:
+      from_secret: docker_password
+    DOCKER_USERNAME:
+      from_secret: docker_username
+  when:
+    branch:
+    - master
+
+- name: slack
+  pull: default
+  image: plugins/slack
+  settings:
+    channel: general
+  environment:
+    SLACK_TOKEN:
+      from_secret: token
+
+services:
+- name: database
+  pull: default
+  image: mysql
+  environment:
+    MYSQL_PASSWORD: bar
+    MYSQL_USERNAME: foo
+
+volumes:
+- name: 2f746d702f676f
+  host:
+    path: /tmp/go
+
+trigger:
+  branch:
+  - master
+
+...

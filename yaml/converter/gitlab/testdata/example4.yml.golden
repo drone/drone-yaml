@@ -1,0 +1,54 @@
+---
+kind: pipeline
+name: build
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: job 1
+  image: ruby:2.2
+  commands:
+  - make build dependencies
+
+- name: job 2
+  image: ruby:2.2
+  commands:
+  - make build artifacts
+
+---
+kind: pipeline
+name: test
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: job 3
+  image: ruby:2.2
+  commands:
+  - make test
+
+depends_on:
+- build
+
+---
+kind: pipeline
+name: deploy
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: job 4
+  image: ruby:2.2
+  commands:
+  - make deploy
+
+depends_on:
+- test
+
+...

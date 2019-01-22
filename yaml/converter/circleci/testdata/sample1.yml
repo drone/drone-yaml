@@ -1,0 +1,22 @@
+version: 2
+jobs:
+  backend:
+    docker:
+      - image: golang:1.8
+    steps:
+      - checkout
+      - run: go build
+      - run: go test
+  frontend:
+    docker:
+      - image: node:latest
+    steps:
+      - checkout
+      - run: npm install
+      - run: npm test
+workflows:
+  version: 2
+  default:
+    jobs:
+      - backend
+      - frontend

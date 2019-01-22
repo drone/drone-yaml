@@ -1,0 +1,16 @@
+image:
+  name: ruby:2.2
+  entrypoint: ["/bin/bash"]
+
+services:
+- name: my-postgres:9.4
+  alias: db-postgres
+  entrypoint: ["/usr/local/bin/db-postgres"]
+  command: ["start"]
+
+before_script:
+- bundle install
+
+test:
+  script:
+  - bundle exec rake spec

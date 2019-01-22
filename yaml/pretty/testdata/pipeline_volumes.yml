@@ -1,0 +1,30 @@
+---
+kind: pipeline
+name: default
+
+steps:
+- name: compile
+  image: golang
+  commands:
+  - go test
+  - go build
+
+- name: build
+  image: docker
+  commands:
+  - docker build .
+  volumes:
+  - name: sock
+    path: /var/run/docker.sock
+
+volumes:
+- name: temp
+  temp:
+    medium: memory
+- name: sock
+  host:
+    path: /var/run/docker.sock
+
+depends_on:
+- foo
+- bar

@@ -1,0 +1,22 @@
+---
+kind: pipeline
+name: default
+
+pipeline:
+- name: build
+  image: golang
+  commands:
+  - go build
+  - go test
+
+---
+kind: secret
+data:
+  password: YjgwNDc4ZDY4NmQzNzQzYjNkYmUwYmE3YjMwOTM2OWUK
+  username: N2NmYjA3ODQwNTY1ODFlY2E5MGJmOWI1NDk0NDFhMTEK
+
+---
+kind: signature
+hmac: 389cf92a7472870783a9a5ea77b4abe58a4bb67ba58e1e7293e943aee314aedc
+
+...

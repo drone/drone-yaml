@@ -1,0 +1,48 @@
+workspace:
+  base: /go
+  path: src/github.com/octocat/hello-world
+
+pipeline:
+  build:
+    image: golang
+    commands:
+    - go get
+    - go build
+    volumes:
+    - /tmp/go:/go/bin
+    environment:
+    - GOOS=linux
+    - GOARCH=amd64
+
+  test:
+    image: golang:latest
+    volumes:
+    - /tmp/go:/go/bin
+    commands:
+    - go test -v
+  
+  docker:
+    image: plugins/docker
+    secrets:
+    - docker_username
+    - docker_password
+    repo: octocat/hello-world
+    when:
+      branch: master
+
+  slack:
+    image: plugins/slack
+    secrets:
+    - source: token
+      target: slack_token
+    channel: general
+
+services:
+  database:
+    image: mysql
+    environment:
+      MYSQL_USERNAME: foo
+      MYSQL_PASSWORD: bar
+
+branches:
+- master

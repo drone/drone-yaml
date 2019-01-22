@@ -1,0 +1,17 @@
+---
+kind: pipeline
+name: linux
+
+steps:
+- name: database
+  image: redis
+  detach: true
+  ports:
+  - port: 6379
+    host: 6379
+
+- name: test
+  image: golang
+  commands:
+  - go build
+  - go test

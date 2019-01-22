@@ -1,0 +1,19 @@
+---
+kind: pipeline
+name: default
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: redis
+  pull: always
+  image: redis:latest
+  ports:
+  - 6379
+  - port: 6379
+    host: 6379
+    protocol: TCP
+
+...

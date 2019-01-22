@@ -1,0 +1,12 @@
+---
+kind: pipeline
+name: default
+
+clone:
+  disable: true
+
+steps:
+- name: webhook
+  image: alpine
+  commands:
+  - curl -x POST http://abc.com:80/~smith/home.html

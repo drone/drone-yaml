@@ -1,0 +1,22 @@
+---
+kind: pipeline
+name: default
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: build
+  image: golang
+  commands:
+  - go build
+  resources:
+    limits:
+      cpu: 2000
+      memory: 100MiB
+    requests:
+      cpu: 100
+      memory: 50MiB
+
+...

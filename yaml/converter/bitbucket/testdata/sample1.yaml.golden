@@ -1,0 +1,31 @@
+---
+kind: pipeline
+name: default
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: Build and test
+  image: node:8.5.0
+  commands:
+  - npm install
+  - npm test
+  - npm build
+
+- name: Integration test
+  image: node:8.5.0
+  commands:
+  - npm run integration-test
+
+- name: Deploy to beanstalk
+  image: python:3.5.1
+  commands:
+  - python deploy-to-beanstalk.py
+
+services:
+- name: postgres
+  image: postgres:9.6.4
+
+...

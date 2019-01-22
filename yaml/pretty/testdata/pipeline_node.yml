@@ -1,0 +1,19 @@
+kind: pipeline
+name: default
+
+steps:
+  - name: build
+    image: golang
+    commands:
+      - go build
+
+  - name: test
+    image: golang
+    commands:
+      - go build
+      - go test -v
+    depends_on:
+    - build
+
+node:
+  disk: ssd
