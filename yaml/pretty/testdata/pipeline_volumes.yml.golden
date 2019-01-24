@@ -25,6 +25,8 @@ volumes:
 - name: temp
   temp:
     medium: memory
+- name: empty
+  temp: {}
 - name: sock
   host:
     path: /var/run/docker.sock
