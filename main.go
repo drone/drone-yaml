@@ -15,6 +15,7 @@ import (
 	"github.com/drone/drone-yaml/yaml"
 	"github.com/drone/drone-yaml/yaml/compiler"
 	"github.com/drone/drone-yaml/yaml/compiler/transform"
+	"github.com/drone/drone-yaml/yaml/converter"
 	"github.com/drone/drone-yaml/yaml/linter"
 	"github.com/drone/drone-yaml/yaml/pretty"
 	"github.com/drone/drone-yaml/yaml/signer"
@@ -27,6 +28,10 @@ var (
 	formatPriv = format.Flag("privileged", "privileged mode").Short('p').Bool()
 	formatSave = format.Flag("save", "save result to source").Short('s').Bool()
 	formatFile = format.Arg("source", "source file location").Default(".drone.yml").File()
+
+	convert     = kingpin.Command("convert", "convert the yaml file")
+	convertSave = convert.Flag("save", "save result to source").Short('s').Bool()
+	convertFile = convert.Arg("source", "source file location").Default(".drone.yml").File()
 
 	lint     = kingpin.Command("lint", "lint the yaml file")
 	lintPriv = lint.Flag("privileged", "privileged mode").Short('p').Bool()
@@ -50,6 +55,8 @@ func main() {
 	switch kingpin.Parse() {
 	case format.FullCommand():
 		kingpin.FatalIfError(runFormat(), "")
+	case convert.FullCommand():
+		kingpin.FatalIfError(runConvert(), "")
 	case lint.FullCommand():
 		kingpin.FatalIfError(runLint(), "")
 	case sign.FullCommand():
@@ -75,6 +82,26 @@ func runFormat() error {
 		return ioutil.WriteFile(f.Name(), b.Bytes(), 0644)
 	}
 	_, err = io.Copy(os.Stderr, b)
+	return err
+}
+
+func runConvert() error {
+	f := *convertFile
+	d, err := ioutil.ReadAll(f)
+	if err != nil {
+		return err
+	}
+	m := converter.Metadata{
+		Filename: f.Name(),
+	}
+	b, err := converter.Convert(d, m)
+	if err != nil {
+		return err
+	}
+	if *formatSave {
+		return ioutil.WriteFile(f.Name(), b, 0644)
+	}
+	_, err = io.Copy(os.Stderr, bytes.NewReader(b))
 	return err
 }
 
