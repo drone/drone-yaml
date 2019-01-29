@@ -1,0 +1,19 @@
+
+pipeline:
+  test:
+    image: golang:${GO_VERSION}
+    commands:
+    - go test -v ./...
+
+services:
+  redis:
+    image: redis:${REDIS_VERSION}
+
+matrix:
+  GO_VERSION:
+  - 1.11
+  - 1.10
+
+  REDIS_VERSION:
+  - 2.6
+  - 2.8
