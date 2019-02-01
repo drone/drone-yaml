@@ -14,7 +14,7 @@ steps:
   - bundle exec rake spec
 
 services:
-- name: postgres-9-3
+- name: postgres
   image: postgres:9.3
 
 ...
