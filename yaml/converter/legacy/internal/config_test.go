@@ -26,6 +26,14 @@ func TestConvert(t *testing.T) {
 			before: "testdata/vault_3.yml",
 			after:  "testdata/vault_3.yml.golden",
 		},
+		{
+			before: "testdata/matrix_1.yml",
+			after:  "testdata/matrix_1.yml.golden",
+		},
+		{
+			before: "testdata/matrix_2.yml",
+			after:  "testdata/matrix_2.yml.golden",
+		},
 	}
 
 	for _, test := range tests {
