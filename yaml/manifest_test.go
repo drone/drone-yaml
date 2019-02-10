@@ -1,3 +1,7 @@
+// Copyright 2019 Drone.IO Inc. All rights reserved.
+// Use of this source code is governed by the Drone Community
+// License that can be found in the LICENSE file.
+
 package yaml
 
 import (
@@ -24,9 +28,6 @@ func diff(file string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	// enc := json.NewEncoder(os.Stdout)
-	// enc.SetIndent("", "  ")
-	// enc.Encode(a)
 	d, err := ioutil.ReadFile(file + ".golden")
 	if err != nil {
 		return "", err

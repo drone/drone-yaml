@@ -38,34 +38,10 @@ steps:
   settings:
     room: general
     token:
-      $secret: token
+      from_secret: token
 
 node:
   disk: ssd
 
 depends_on:
 - build
-
----
-kind: cron
-name: nightly
-spec:
-  schedule: "1 * * * *"
-  branch: master
-  deployment:
-    target: production
-
----
-kind: secret
-type: encrypted
-
-data:
-  token: N2NmYjA3ODQwNTY1ODFlY2E5MGJmOWI1NDk0NDFhMTEK
-
----
-kind: registry
-type: encrypted
-
-data:
-  index.drone.io: N2NmYjA3ODQwNTY1ODFlY2E5MGJmOWI1NDk0NDFhMTEK
-

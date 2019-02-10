@@ -1,3 +1,9 @@
+// Copyright 2019 Drone.IO Inc. All rights reserved.
+// Use of this source code is governed by the Drone Community
+// License that can be found in the LICENSE file.
+
+// +build !oss
+
 package pretty
 
 import (
@@ -105,6 +111,9 @@ func printConditions(w writer, name string, v yaml.Conditions) {
 	w.IndentIncrease()
 	if !isConditionEmpty(v.Branch) {
 		printCondition(w, "branch", v.Branch)
+	}
+	if !isConditionEmpty(v.Cron) {
+		printCondition(w, "cron", v.Cron)
 	}
 	if !isConditionEmpty(v.Event) {
 		printCondition(w, "event", v.Event)
