@@ -102,7 +102,10 @@ func (m *Manifest) MarshalJSON() ([]byte, error) {
 	return json.Marshal(m.Resources)
 }
 
-// MarshalYAML implement the yaml.Marshaler.
+// MarshalYAML is not implemented and returns an error. This is
+// because the Manifest is a representation of multiple yaml
+// documents, and MarshalYAML would otherwise attempt to marshal
+// as a single Yaml document. Use the Encode method instead.
 func (m *Manifest) MarshalYAML() (interface{}, error) {
 	return nil, errors.New("yaml: marshal not implemented")
 }
