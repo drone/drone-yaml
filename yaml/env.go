@@ -19,26 +19,27 @@ type (
 	// can be defined as a string literal or as a reference
 	// to a secret.
 	Variable struct {
-		Value  string `json:"value,omitempty"`
-		Secret string `json:"from_secret,omitempty" yaml:"from_secret"`
+		Value  string     `json:"value,omitempty"`
+		Secret FromSecret `json:"from_secret,omitempty" yaml:"from_secret"`
 	}
 
 	// variable is a tempoary type used to unmarshal
 	// variables with references to secrets.
 	variable struct {
-		Value  string
-		Secret string `yaml:"from_secret"`
+		FromSecret FromSecret `yaml:"from_secret"`
 	}
 )
 
 // UnmarshalYAML implements yaml unmarshalling.
 func (v *Variable) UnmarshalYAML(unmarshal func(interface{}) error) error {
 	d := new(variable)
-	err := unmarshal(&d.Value)
-	if err != nil {
-		err = unmarshal(d)
+	err := unmarshal(d)
+	if err == nil && (d.FromSecret.Name != "" || d.FromSecret.Path != "") {
+		v.Secret = d.FromSecret
+		return nil
 	}
-	v.Value = d.Value
-	v.Secret = d.Secret
+	var s string
+	err = unmarshal(&s)
+	v.Value = s
 	return err
 }

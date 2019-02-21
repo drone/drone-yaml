@@ -14,7 +14,8 @@ func TestEnv(t *testing.T) {
 	tests := []struct {
 		yaml  string
 		value string
-		from  string
+		name  string
+		path  string
 	}{
 		{
 			yaml:  "bar",
@@ -22,7 +23,12 @@ func TestEnv(t *testing.T) {
 		},
 		{
 			yaml: "from_secret: username",
-			from: "username",
+			name: "username",
+		},
+		{
+			yaml: "from_secret: { name: username, path: secret/data/docker }",
+			name: "username",
+			path: "secret/data/docker",
 		},
 	}
 	for _, test := range tests {
@@ -36,8 +42,11 @@ func TestEnv(t *testing.T) {
 		if got, want := out.Value, test.value; got != want {
 			t.Errorf("Want variable value %q, got %q", want, got)
 		}
-		if got, want := out.Secret, test.from; got != want {
-			t.Errorf("Want variable from_secret %q, got %q", want, got)
+		if got, want := out.Secret.Name, test.name; got != want {
+			t.Errorf("Want variable from_secret.name %q, got %q", want, got)
+		}
+		if got, want := out.Secret.Path, test.path; got != want {
+			t.Errorf("Want variable from_secret.path %q, got %q", want, got)
 		}
 	}
 }

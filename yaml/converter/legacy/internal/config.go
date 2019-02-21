@@ -195,7 +195,7 @@ func toEnvironment(from *Container) map[string]*droneyaml.Variable {
 	for _, val := range from.Secrets.Secrets {
 		name := strings.ToUpper(val.Target)
 		envs[name] = &droneyaml.Variable{
-			Secret: val.Source,
+			Secret: droneyaml.FromSecret{Name: val.Source},
 		}
 	}
 	return envs

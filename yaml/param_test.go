@@ -5,6 +5,7 @@
 package yaml
 
 import (
+	"reflect"
 	"testing"
 
 	"gopkg.in/yaml.v2"
@@ -14,15 +15,32 @@ func TestParam(t *testing.T) {
 	tests := []struct {
 		yaml  string
 		value interface{}
-		from  string
+		name  string
+		path  string
 	}{
 		{
 			yaml:  "bar",
 			value: "bar",
+			name:  "",
+			path:  "",
 		},
 		{
-			yaml: "from_secret: username",
-			from: "username",
+			yaml:  "[ bar ]",
+			value: []interface{}{"bar"},
+			name:  "",
+			path:  "",
+		},
+		{
+			yaml:  "from_secret: username",
+			value: nil,
+			name:  "username",
+			path:  "",
+		},
+		{
+			yaml:  "from_secret: { path: secret/data/docker, name: username }",
+			value: nil,
+			name:  "username",
+			path:  "secret/data/docker",
 		},
 	}
 	for _, test := range tests {
@@ -33,11 +51,14 @@ func TestParam(t *testing.T) {
 			t.Error(err)
 			return
 		}
-		if got, want := out.Value, test.value; got != want {
-			t.Errorf("Want value %q, got %q", want, got)
+		if got, want := out.Value, test.value; !reflect.DeepEqual(got, want) {
+			t.Errorf("Want value %q of type %T, got %q of type %T", want, want, got, got)
 		}
-		if got, want := out.Secret, test.from; got != want {
-			t.Errorf("Want from_secret %q, got %q", want, got)
+		if got, want := out.Secret.Name, test.name; got != want {
+			t.Errorf("Want from_secret.name %q, got %q", want, got)
+		}
+		if got, want := out.Secret.Path, test.path; got != want {
+			t.Errorf("Want from_secret.path %q, got %q", want, got)
 		}
 	}
 }
