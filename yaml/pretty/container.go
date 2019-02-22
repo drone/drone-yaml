@@ -114,12 +114,12 @@ func printEnviron(w writer, v map[string]*yaml.Variable) {
 	w.IndentIncrease()
 	for _, k := range keys {
 		v := v[k]
-		if v.Secret.Name == "" && v.Secret.Path == "" {
+		if v.Secret == "" {
 			w.WriteTagValue(k, v.Value)
 		} else {
 			w.WriteTag(k)
 			w.IndentIncrease()
-			printFromSecret(w, v.Secret)
+			w.WriteTagValue("from_secret", v.Secret)
 			w.IndentDecrease()
 		}
 	}
@@ -183,12 +183,12 @@ func printSettings(w writer, v map[string]*yaml.Parameter) {
 	w.IndentIncrease()
 	for _, k := range keys {
 		v := v[k]
-		if v.Secret.Name == "" && v.Secret.Path == "" {
+		if v.Secret == "" {
 			w.WriteTagValue(k, v.Value)
 		} else {
 			w.WriteTag(k)
 			w.IndentIncrease()
-			printFromSecret(w, v.Secret)
+			w.WriteTagValue("from_secret", v.Secret)
 			w.IndentDecrease()
 		}
 	}
@@ -205,19 +205,6 @@ func printVolumeMounts(w writer, v []*yaml.VolumeMount) {
 		s.WriteTagValue("name", v.Name)
 		s.WriteTagValue("path", v.MountPath)
 		s.IndentDecrease()
-	}
-}
-
-// helper function pretty prints the from_secret sequence.
-func printFromSecret(w writer, v yaml.FromSecret) {
-	if v.Path == "" {
-		w.WriteTagValue("from_secret", v.Name)
-	} else {
-		w.WriteTag("from_secret")
-		w.IndentIncrease()
-		w.WriteTagValue("path", v.Path)
-		w.WriteTagValue("name", v.Name)
-		w.IndentDecrease()
 	}
 }
 

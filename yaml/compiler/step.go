@@ -86,9 +86,9 @@ func createStep(spec *engine.Spec, src *yaml.Container) *engine.Step {
 	// appends the environment variables to the
 	// container definition.
 	for key, value := range src.Environment {
-		if value.Secret.Name != "" {
+		if value.Secret != "" {
 			sec := &engine.SecretVar{
-				Name: value.Secret.Name,
+				Name: value.Secret,
 				Env:  key,
 			}
 			dst.Secrets = append(dst.Secrets, sec)
@@ -106,9 +106,9 @@ func createStep(spec *engine.Spec, src *yaml.Container) *engine.Step {
 
 		// if the setting parameter is sources from the
 		// secret we create a secret enviornment variable.
-		if value.Secret.Name != "" {
+		if value.Secret != "" {
 			sec := &engine.SecretVar{
-				Name: value.Secret.Name,
+				Name: value.Secret,
 				Env:  key,
 			}
 			dst.Secrets = append(dst.Secrets, sec)
