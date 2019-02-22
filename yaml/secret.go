@@ -26,9 +26,20 @@ type (
 		Version string `json:"version,omitempty"`
 		Kind    string `json:"kind,omitempty"`
 		Type    string `json:"type,omitempty"`
+		Name    string `json:"name,omitempty"`
 
 		Data     map[string]string       `json:"data,omitempty"`
 		External map[string]ExternalData `json:"external_data,omitempty" yaml:"external_data"`
+		Get      SecretGet               `json:"get,omitempty"`
+	}
+
+	// SecretGet defines a request to get a secret from
+	// an external sevice at the specified path, or with the
+	// specified name.
+	SecretGet struct {
+		Path string `json:"path,omitempty"`
+		Name string `json:"name,omitempty"`
+		Key  string `json:"key,omitempty"`
 	}
 
 	// ExternalData defines the path and name of external
