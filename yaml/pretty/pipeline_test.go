@@ -151,3 +151,12 @@ func TestPipeline_Workspace(t *testing.T) {
 		t.Errorf("Unepxected formatting")
 	}
 }
+
+func TestPipeline_ImagePullSecrets(t *testing.T) {
+	ok, err := diff("testdata/pipeline_image_pull_secrets.yml")
+	if err != nil {
+		t.Error(err)
+	} else if !ok {
+		t.Errorf("Unepxected formatting")
+	}
+}

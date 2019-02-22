@@ -67,6 +67,11 @@ func printPipeline(w writer, v *yaml.Pipeline) {
 		w.WriteByte('\n')
 	}
 
+	if len(v.PullSecrets) > 0 {
+		w.WriteTagValue("image_pull_secrets", v.PullSecrets)
+		w.WriteByte('\n')
+	}
+
 	if len(v.Node) > 0 {
 		printNode(w, v.Node)
 		w.WriteByte('\n')
