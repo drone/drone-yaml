@@ -86,6 +86,10 @@ func createStep(spec *engine.Spec, src *yaml.Container) *engine.Step {
 	// appends the environment variables to the
 	// container definition.
 	for key, value := range src.Environment {
+		// fix https://github.com/drone/drone-yaml/issues/13
+		if value == nil {
+			continue
+		}
 		if value.Secret != "" {
 			sec := &engine.SecretVar{
 				Name: value.Secret,
@@ -100,6 +104,10 @@ func createStep(spec *engine.Spec, src *yaml.Container) *engine.Step {
 	// appends the settings variables to the
 	// container definition.
 	for key, value := range src.Settings {
+		// fix https://github.com/drone/drone-yaml/issues/13
+		if value == nil {
+			continue
+		}
 		// all settings are passed to the plugin env
 		// variables, prefixed with PLUGIN_
 		key = "PLUGIN_" + strings.ToUpper(key)
