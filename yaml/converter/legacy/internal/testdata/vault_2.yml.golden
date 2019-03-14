@@ -20,11 +20,16 @@ steps:
 
 ---
 kind: secret
-type: general
-external_data:
-  docker_password:
-    path: secret/docker/password
-  docker_username:
-    path: secret/docker/username
+name: docker_password
+
+get:
+  path: secret/docker/password
+
+---
+kind: secret
+name: docker_username
+
+get:
+  path: secret/docker/username
 
 ...

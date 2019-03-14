@@ -8,6 +8,8 @@ import (
 	"bytes"
 	"io/ioutil"
 	"testing"
+
+	"github.com/sergi/go-diff/diffmatchpatch"
 )
 
 func TestConvert(t *testing.T) {
@@ -58,7 +60,9 @@ func TestConvert(t *testing.T) {
 		}
 		if bytes.Equal(b, c) == false {
 			t.Errorf("Unexpected yaml conversion of %s", test.before)
-			t.Log(string(c))
+			dmp := diffmatchpatch.New()
+			diffs := dmp.DiffMain(string(b), string(c), false)
+			t.Log(dmp.DiffCleanupSemantic(diffs))
 		}
 	}
 }
