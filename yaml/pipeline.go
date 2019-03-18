@@ -97,7 +97,7 @@ type (
 	// ResourceObject describes compute resource
 	// requirements.
 	ResourceObject struct {
-		CPU    MilliSize `json:"cpu"`
+		CPU    string    `json:"cpu"`
 		Memory BytesSize `json:"memory"`
 	}
 

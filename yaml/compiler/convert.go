@@ -84,7 +84,7 @@ func toResourceObject(from *yaml.ResourceObject) *engine.ResourceObject {
 		return nil
 	}
 	return &engine.ResourceObject{
-		CPU:    int64(from.CPU),
+		// TODO(bradrydzewski) set the CPU resource limit.
 		Memory: int64(from.Memory),
 	}
 }

@@ -8,7 +8,7 @@ steps:
       - go build
     resources:
       limits:
-        cpu: 2
+        cpu: 200m
         memory: '100Mi'
       requests:
         cpu: 100m
