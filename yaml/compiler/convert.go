@@ -84,7 +84,14 @@ func toResourceObject(from *yaml.ResourceObject) *engine.ResourceObject {
 		return nil
 	}
 	return &engine.ResourceObject{
-		CPU:    from.CPU,
+		CPU:    toCPUMillis(from.CPU),
 		Memory: int64(from.Memory),
 	}
+}
+
+func toCPUMillis(f float64) int64 {
+	if f > 0 {
+		f *= 1000
+	}
+	return int64(f)
 }

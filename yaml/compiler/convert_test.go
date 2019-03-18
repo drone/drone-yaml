@@ -136,9 +136,11 @@ func Test_toResources(t *testing.T) {
 		Resources: &yaml.Resources{
 			Limits: &yaml.ResourceObject{
 				Memory: yaml.BytesSize(1000),
+				CPU:    4,
 			},
 			Requests: &yaml.ResourceObject{
 				Memory: yaml.BytesSize(2000),
+				CPU:    0.1,
 			},
 		},
 	}
@@ -146,9 +148,11 @@ func Test_toResources(t *testing.T) {
 	b = &engine.Resources{
 		Limits: &engine.ResourceObject{
 			Memory: 1000,
+			CPU:    4000,
 		},
 		Requests: &engine.ResourceObject{
 			Memory: 2000,
+			CPU:    100,
 		},
 	}
 	if diff := cmp.Diff(a, b); diff != "" {
