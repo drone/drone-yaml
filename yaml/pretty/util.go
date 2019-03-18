@@ -18,11 +18,9 @@ import "github.com/drone/drone-yaml/yaml"
 
 func isPrimative(v interface{}) bool {
 	switch v.(type) {
-	case bool, string, int, float64:
+	case bool, string, int, int64, float64:
 		return true
 	case yaml.BytesSize:
-		return true
-	case yaml.MilliSize:
 		return true
 	default:
 		return false

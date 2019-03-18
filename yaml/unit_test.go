@@ -1,4 +1,3 @@
-// Copyright Jesse Haka.
 // Copyright the Drone Authors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -56,45 +55,6 @@ func TestBytesSize(t *testing.T) {
 		}
 		if got, want := out.String(), test.text; got != want {
 			t.Errorf("Want byte text %s, got %s", want, got)
-		}
-	}
-}
-
-func TestMilliSize(t *testing.T) {
-	tests := []struct {
-		yaml string
-		size int64
-		text string
-	}{
-		{
-			yaml: "100m",
-			size: 100,
-			text: "100",
-		},
-		{
-			yaml: "1",
-			size: 1000,
-			text: "1000",
-		},
-		{
-			yaml: "0m",
-			size: 0,
-			text: "0",
-		},
-	}
-	for _, test := range tests {
-		in := []byte(test.yaml)
-		out := MilliSize(0)
-		err := yaml.Unmarshal(in, &out)
-		if err != nil {
-			t.Error(err)
-			return
-		}
-		if got, want := int64(out), test.size; got != want {
-			t.Errorf("Want millis %d, got %d", want, got)
-		}
-		if got, want := out.String(), test.text; got != want {
-			t.Errorf("Want text %s, got %s", want, got)
 		}
 	}
 }

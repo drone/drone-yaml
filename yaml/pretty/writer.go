@@ -183,6 +183,12 @@ func writeInt(w writer, v int) {
 	)
 }
 
+func writeInt64(w writer, v int64) {
+	w.WriteString(
+		strconv.FormatInt(v, 10),
+	)
+}
+
 func writeEncode(w writer, v string) {
 	if len(v) == 0 {
 		w.WriteByte('"')
@@ -204,7 +210,7 @@ func writeValue(w writer, v interface{}) {
 		return
 	}
 	switch v := v.(type) {
-	case bool, int, float64, string:
+	case bool, int, int64, float64, string:
 		writeScalar(w, v)
 	case []interface{}:
 		writeSequence(w, v)
@@ -216,8 +222,6 @@ func writeValue(w writer, v interface{}) {
 		writeMappingStr(w, v)
 	case yaml.BytesSize:
 		writeValue(w, v.String())
-	case yaml.MilliSize:
-		writeValue(w, v.String())
 	}
 }
 
@@ -227,6 +231,8 @@ func writeScalar(w writer, v interface{}) {
 		writeBool(w, v)
 	case int:
 		writeInt(w, v)
+	case int64:
+		writeInt64(w, v)
 	case float64:
 		writeFloat(w, v)
 	case string:
