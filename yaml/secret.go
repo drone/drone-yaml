@@ -28,9 +28,8 @@ type (
 		Type    string `json:"type,omitempty"`
 		Name    string `json:"name,omitempty"`
 
-		Data     map[string]string       `json:"data,omitempty"`
-		External map[string]ExternalData `json:"external_data,omitempty" yaml:"external_data"`
-		Get      SecretGet               `json:"get,omitempty"`
+		Data string    `json:"data,omitempty"`
+		Get  SecretGet `json:"get,omitempty"`
 	}
 
 	// SecretGet defines a request to get a secret from
@@ -58,7 +57,7 @@ func (s *Secret) GetKind() string { return s.Kind }
 
 // Validate returns an error if the secret is invalid.
 func (s *Secret) Validate() error {
-	if len(s.Data) == 0 && len(s.External) == 0 {
+	if len(s.Data) == 0 && len(s.Get.Path) == 0 && len(s.Get.Name) == 0 {
 		return errors.New("yaml: invalid secret resource")
 	}
 	return nil

@@ -28,36 +28,19 @@ func printSecret(w writer, v *yaml.Secret) {
 	w.WriteString("---")
 	w.WriteTagValue("version", v.Version)
 	w.WriteTagValue("kind", v.Kind)
+	w.WriteTagValue("type", v.Type)
 
 	if len(v.Data) > 0 {
-		w.WriteTagValue("type", toSecretType(v.Type))
 		w.WriteTagValue("name", v.Name)
 		printData(w, v.Data)
 	}
-	if len(v.External) > 0 {
-		w.WriteTagValue("type", toSecretType(v.Type))
-		w.WriteTagValue("name", v.Name)
-		printExternalData(w, v.External)
-	}
 	if isSecretGetEmpty(v.Get) == false {
-		w.WriteTagValue("type", v.Type)
 		w.WriteTagValue("name", v.Name)
 		w.WriteByte('\n')
 		printGet(w, v.Get)
 	}
 	w.WriteByte('\n')
 	w.WriteByte('\n')
-}
-
-// helper function returns the secret type text.
-func toSecretType(s string) string {
-	s = strings.ToLower(s)
-	switch s {
-	case "docker", "ecr", "general":
-		return s
-	default:
-		return "general"
-	}
 }
 
 // helper function prints the get block.
@@ -91,28 +74,16 @@ func printExternalData(w writer, d map[string]yaml.ExternalData) {
 	w.IndentDecrease()
 }
 
-func printData(w writer, d map[string]string) {
-	var keys []string
-	for k := range d {
-		keys = append(keys, k)
-	}
-	sort.Strings(keys)
-
+func printData(w writer, d string) {
 	w.WriteTag("data")
+	w.WriteByte(' ')
+	w.WriteByte('>')
 	w.IndentIncrease()
-	for _, k := range keys {
-		v := d[k]
-		w.WriteTag(k)
-		w.WriteByte(' ')
-		w.WriteByte('>')
-		w.IndentIncrease()
-		v = spaceReplacer.Replace(v)
-		for _, s := range chunk(v, 60) {
-			w.WriteByte('\n')
-			w.Indent()
-			w.WriteString(s)
-		}
-		w.IndentDecrease()
+	d = spaceReplacer.Replace(d)
+	for _, s := range chunk(d, 60) {
+		w.WriteByte('\n')
+		w.Indent()
+		w.WriteString(s)
 	}
 	w.IndentDecrease()
 }

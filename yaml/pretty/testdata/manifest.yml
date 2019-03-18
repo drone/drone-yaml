@@ -36,16 +36,9 @@ depends_on:
 - bar
 
 ---
-kind: registry
-data:
-  index.docker.io: N2NmYjA3ODQwNTY1ODFlY2E5MGJmOWI1NDk0NDFhMTEK
-
----
 kind: secret
-type: general
-data:
-  username: N2NmYjA3ODQwNTY1ODFlY2E5MGJmOWI1NDk0NDFhMTEK
-  password: YjgwNDc4ZDY4NmQzNzQzYjNkYmUwYmE3YjMwOTM2OWUK
+name: username
+data: N2NmYjA3ODQwNTY1ODFlY2E5MGJmOWI1NDk0NDFhMTEK
 
 ---
 kind: cron
@@ -60,5 +53,3 @@ spec:
 ---
 kind: signature
 hmac: N2NmYjA3ODQwNTY1ODFlY2E5MGJmOWI1NDk0NDFhMTEK
-
-...

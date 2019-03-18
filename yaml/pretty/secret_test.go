@@ -15,15 +15,6 @@ func TestSecret(t *testing.T) {
 	}
 }
 
-func TestExternalSecret(t *testing.T) {
-	ok, err := diff("testdata/secret_extern.yml")
-	if err != nil {
-		t.Error(err)
-	} else if !ok {
-		t.Errorf("Unepxected formatting")
-	}
-}
-
 func TestGetSecret(t *testing.T) {
 	ok, err := diff("testdata/secret_get.yml")
 	if err != nil {

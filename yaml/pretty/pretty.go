@@ -29,8 +29,6 @@ func Print(w io.Writer, v *yaml.Manifest) {
 			printCron(state, t)
 		case *yaml.Secret:
 			printSecret(state, t)
-		case *yaml.Registry:
-			printRegistry(state, t)
 		case *yaml.Signature:
 			printSignature(state, t)
 		case *yaml.Pipeline:

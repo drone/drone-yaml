@@ -4,9 +4,7 @@
 
 package yaml
 
-import (
-	"testing"
-)
+import "testing"
 
 func TestSecretUnmarshal(t *testing.T) {
 	diff, err := diff("testdata/secret.yml")
@@ -22,18 +20,20 @@ func TestSecretUnmarshal(t *testing.T) {
 func TestSecretValidate(t *testing.T) {
 	secret := new(Secret)
 
-	secret.Data = map[string]string{"foo": "bar"}
+	secret.Data = "some-data"
 	if err := secret.Validate(); err != nil {
 		t.Error(err)
 		return
 	}
 
-	secret.Data = map[string]string{}
-	if err := secret.Validate(); err == nil {
-		t.Errorf("Expect invalid secret error")
+	secret.Get.Path = "secret/data/docker"
+	if err := secret.Validate(); err != nil {
+		t.Error(err)
+		return
 	}
 
-	secret.Data = nil
+	secret.Data = ""
+	secret.Get.Path = ""
 	if err := secret.Validate(); err == nil {
 		t.Errorf("Expect invalid secret error")
 	}
