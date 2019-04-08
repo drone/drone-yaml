@@ -60,6 +60,15 @@ func TestPipeline_Clone_SkipVerify(t *testing.T) {
 	}
 }
 
+func TestPipeline_Clone_Recursive(t *testing.T) {
+	ok, err := diff("testdata/pipeline_clone_recursive.yml")
+	if err != nil {
+		t.Error(err)
+	} else if !ok {
+		t.Errorf("Unepxected formatting")
+	}
+}
+
 func TestPipeline_Depends(t *testing.T) {
 	ok, err := diff("testdata/pipeline_depends.yml")
 	if err != nil {

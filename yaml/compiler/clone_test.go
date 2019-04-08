@@ -113,3 +113,33 @@ func TestSetupCloneSkipVerify(t *testing.T) {
 		t.Errorf("Expect skip verify %s, got %s", want, got)
 	}
 }
+
+func TestSetupCloneRecursive(t *testing.T)  {
+	// test zero depth
+	src := &yaml.Pipeline{
+		Clone: yaml.Clone{
+			Recursive: false,
+		},
+	}
+	dst := &engine.Step{
+		Envs: map[string]string{},
+	}
+	setupCloneDepth(src, dst)
+	if _, ok := dst.Envs["PLUGIN_RECURSIVE"]; ok {
+		t.Errorf("Expect depth ignored when zero value")
+	}
+
+	// test non-zero depth
+	src = &yaml.Pipeline{
+		Clone: yaml.Clone{
+			Recursive: true,
+		},
+	}
+	dst = &engine.Step{
+		Envs: map[string]string{},
+	}
+	setupCloneDepth(src, dst)
+	if got, want := dst.Envs["PLUGIN_RECURSIVE"], "true"; got != want {
+		t.Errorf("Expect depth %s, got %s", want, got)
+	}
+}

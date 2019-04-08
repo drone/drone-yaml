@@ -58,6 +58,9 @@ func setupCloneDepth(src *yaml.Pipeline, dst *engine.Step) {
 		dst.Envs["GIT_SSL_NO_VERIFY"] = "true"
 		dst.Envs["PLUGIN_SKIP_VERIFY"] = "true"
 	}
+	if recursive := src.Clone.Recursive; recursive {
+		dst.Envs["PLUGIN_RECURSIVE"] = "true"
+	}
 }
 
 // helper function configures the .git-clone credentials
