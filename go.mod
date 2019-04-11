@@ -6,7 +6,7 @@ require (
 	github.com/bmatcuk/doublestar v1.1.1
 	github.com/docker/distribution v2.7.1+incompatible
 	github.com/docker/go-units v0.3.3
-	github.com/drone/drone-runtime v0.0.0-20190210191445-ad403a0ca24e
+	github.com/drone/drone-runtime v1.0.5
 	github.com/ghodss/yaml v1.0.0
 	github.com/google/go-cmp v0.2.0
 	github.com/opencontainers/go-digest v1.0.0-rc1
