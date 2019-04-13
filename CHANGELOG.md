@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.8] - 2019-04-13
+### Added
+- Support Cron job name in When clause, by [@bradrydzewski](https://github.com/bradrydzewski).
+
 ## [1.0.7] - 2019-04-10
 ### Added
 - Optionally set the Docker container User, by [@bradrydzewski](https://github.com/bradrydzewski).

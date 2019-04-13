@@ -30,6 +30,19 @@ func TestSkipFunc(t *testing.T) {
 			want: true,
 		},
 		//
+		// test cron conditions
+		//
+		{
+			data: SkipData{Cron: "nightly"},
+			when: yaml.Conditions{Cron: yaml.Condition{Include: []string{"nightly"}}},
+			want: false,
+		},
+		{
+			data: SkipData{Cron: "nightly"},
+			when: yaml.Conditions{Cron: yaml.Condition{Exclude: []string{"nightly"}}},
+			want: true,
+		},
+		//
 		// test event conditions
 		//
 		{
