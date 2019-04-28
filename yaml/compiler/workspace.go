@@ -129,6 +129,23 @@ func CreateHostWorkspace(workdir string) func(*engine.Spec) {
 	}
 }
 
+func CreateCopyHostWorkspace() func(*engine.Spec) {
+	return func(spec *engine.Spec) {
+		CreateWorkspace(spec)
+		spec.Docker.Volumes = append(spec.Docker.Volumes,
+			&engine.Volume{
+				Metadata: engine.Metadata{
+					UID:       rand.String(),
+					Name:      workspaceHostName,
+					Namespace: spec.Metadata.Namespace,
+					Labels:    map[string]string{},
+				},
+				EmptyDir: &engine.VolumeEmptyDir{},
+			},
+		)
+	}
+}
+
 //
 //
 //
