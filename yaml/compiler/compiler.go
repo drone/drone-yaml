@@ -96,7 +96,9 @@ func (c *Compiler) Compile(from *yaml.Pipeline) *engine.Spec {
 			Version: from.Platform.Version,
 			Variant: from.Platform.Variant,
 		},
-		Docker:  &engine.DockerConfig{},
+		Docker: &engine.DockerConfig{
+			CopyHost: from.Clone.CopyHost,
+		},
 		Files:   nil,
 		Secrets: nil,
 	}

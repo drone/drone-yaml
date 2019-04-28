@@ -47,6 +47,7 @@ type (
 		Disable    bool `json:"disable,omitempty"`
 		Depth      int  `json:"depth,omitempty"`
 		SkipVerify bool `json:"skip_verify,omitempty" yaml:"skip_verify"`
+		CopyHost   bool `json:",omitempty"`
 	}
 
 	// Concurrency limits pipeline concurrency.
