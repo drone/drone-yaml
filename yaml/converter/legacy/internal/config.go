@@ -39,6 +39,13 @@ type Config struct {
 // Convert converts the yaml configuration file from
 // the legacy format to the 1.0+ format.
 func Convert(d []byte) ([]byte, error) {
+	// hack: this is a hack to support teams migrating
+	// from 0.8 to 1.0 that are using yaml merge keys.
+	// it can be removed in a future version.
+	if hasMergeKeys(d) {
+		d, _ = expandMergeKeys(d)
+	}
+
 	from := new(Config)
 	err := yaml.Unmarshal(d, from)
 
