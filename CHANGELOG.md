@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Fixed
 - Support for yaml merge keys, by [@bradrydzewski](https://github.com/bradrydzewski).
+- Escape values with colons, by [@bradrydzewski](https://github.com/bradrydzewski). Issue [#45](https://github.com/drone/drone-yaml/issues/45).
 
 ## [1.0.9] - 2019-05-20
 ### Added
