@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+## [1.1.1] - 2019-05-30
+### Fixed
+- Retain order of steps when converting legacy pipelines with merge keys, by [@bradrydzewski](https://github.com/bradrydzewski).
+
+
 ## [1.1.0] - 2019-05-30
 ### Fixed
 - Support for yaml merge keys, by [@bradrydzewski](https://github.com/bradrydzewski).
