@@ -7,7 +7,7 @@ package yaml
 import (
 	"testing"
 
-	"gopkg.in/yaml.v2"
+	"github.com/buildkite/yaml"
 )
 
 func TestPort(t *testing.T) {

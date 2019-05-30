@@ -8,7 +8,7 @@ import (
 	"reflect"
 	"testing"
 
-	"gopkg.in/yaml.v2"
+	"github.com/buildkite/yaml"
 )
 
 func TestMapSlice(t *testing.T) {

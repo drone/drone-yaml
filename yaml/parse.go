@@ -21,7 +21,7 @@ import (
 	"os"
 	"strings"
 
-	"gopkg.in/yaml.v2"
+	"github.com/buildkite/yaml"
 )
 
 // Parse parses the configuration from io.Reader r.

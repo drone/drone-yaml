@@ -14,7 +14,7 @@ import (
 	"github.com/drone/drone-yaml/yaml/converter/legacy/matrix"
 	"github.com/drone/drone-yaml/yaml/pretty"
 
-	"gopkg.in/yaml.v2"
+	"github.com/buildkite/yaml"
 )
 
 // Config provides the high-level configuration.

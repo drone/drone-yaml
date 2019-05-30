@@ -18,7 +18,7 @@ import (
 	"strings"
 	"testing"
 
-	"gopkg.in/yaml.v2"
+	"github.com/buildkite/yaml"
 )
 
 // this unit tests pretty prints a complex yaml structure
