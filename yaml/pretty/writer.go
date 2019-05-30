@@ -195,11 +195,17 @@ func writeEncode(w writer, v string) {
 		w.WriteByte('"')
 		return
 	}
+	var prev rune
 	for _, b := range v {
 		if isQuoted(b) {
 			fmt.Fprintf(w, "%q", v)
 			return
 		}
+		if b == ' ' && prev == ':' {
+			fmt.Fprintf(w, "%q", v)
+			return
+		}
+		prev = b
 	}
 	w.WriteString(v)
 }
