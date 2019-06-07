@@ -5,7 +5,7 @@ kind: cron
 spec:
   branch: master
 
-  schedule: "1 * * * *"
+  schedule: 1 * * * *
 
   deployment:
 

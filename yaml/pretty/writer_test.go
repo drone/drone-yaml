@@ -36,7 +36,9 @@ func TestWriteComplexValue(t *testing.T) {
 	got, want := b.String(), strings.TrimSpace(testComplexValue)
 	if got != want {
 		t.Errorf("Unexpected block format")
-		print(got)
+		println(got)
+		println("---")
+		println(want)
 	}
 }
 
