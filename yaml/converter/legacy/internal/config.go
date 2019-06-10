@@ -86,6 +86,14 @@ func Convert(d []byte) ([]byte, error) {
 		)
 	}
 
+	names := map[string]struct{}{}
+	for i, step := range pipeline.Steps {
+		if _, ok := names[step.Name]; ok {
+			step.Name = fmt.Sprintf("%s_%d", step.Name, i)
+		}
+		names[step.Name] = struct{}{}
+	}
+
 	pipeline.Volumes = toVolumes(from)
 	pipeline.Trigger.Branch.Include = from.Branches.Include
 	pipeline.Trigger.Branch.Exclude = from.Branches.Exclude
