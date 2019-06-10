@@ -61,6 +61,9 @@ func Convert(d []byte) ([]byte, error) {
 
 	pipeline.Workspace.Base = from.Workspace.Base
 	pipeline.Workspace.Path = from.Workspace.Path
+	if pipeline.Workspace.Path == "." {
+		pipeline.Workspace.Path = ""
+	}
 
 	if len(from.Clone.Containers) != 0 {
 		pipeline.Clone.Disable = true
