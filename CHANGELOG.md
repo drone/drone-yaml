@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+- Added Action field to trigger and when clause, by [@bradrydzewski](https://github.com/bradrydzewski).
 
 ### Fixed
 
