@@ -193,6 +193,7 @@ var (
 	ref        = compile.Flag("git-ref", "git commit ref").PlaceHolder("refs/heads/master").String()
 	sha        = compile.Flag("git-sha", "git commit sha").String()
 	creds      = compile.Flag("git-creds", "git credentials").URLList()
+        cron       = compile.Flag("cron", "cron job name").String()
 	instance   = compile.Flag("instance", "drone instance hostname").PlaceHolder("drone.company.com").String()
 	deploy     = compile.Flag("deploy-to", "target deployment").PlaceHolder("production").String()
 	secrets    = compile.Flag("secret", "secret variable").StringMap()
@@ -256,6 +257,7 @@ func runCompile() error {
 	comp.SkipFunc = compiler.SkipFunc(
 		compiler.SkipData{
 			Branch:   *branch,
+			Cron:     *cron,
 			Event:    *event,
 			Instance: *instance,
 			Ref:      *ref,

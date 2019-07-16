@@ -261,7 +261,7 @@ func toPullPolicy(pull bool) string {
 	case true:
 		return "always"
 	default:
-		return "default"
+		return "if-not-exists"
 	}
 }
 
