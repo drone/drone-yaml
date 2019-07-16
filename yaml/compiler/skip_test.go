@@ -111,6 +111,19 @@ func TestSkipFunc(t *testing.T) {
 			when: yaml.Conditions{Target: yaml.Condition{Exclude: []string{"prod"}}},
 			want: true,
 		},
+		//
+		// test action conditions
+		//
+		{
+			data: SkipData{Action: "opened"},
+			when: yaml.Conditions{Action: yaml.Condition{Include: []string{"opened"}}},
+			want: false,
+		},
+		{
+			data: SkipData{Action: "opened"},
+			when: yaml.Conditions{Action: yaml.Condition{Exclude: []string{"opened"}}},
+			want: true,
+		},
 	}
 	for i, test := range tests {
 		container := &yaml.Container{When: test.when}
