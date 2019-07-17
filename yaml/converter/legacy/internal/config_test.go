@@ -14,7 +14,7 @@ import (
 
 func TestConvert(t *testing.T) {
 	tests := []struct {
-		before, after string
+		before, after, url string
 	}{
 		{
 			before: "testdata/simple.yml",
@@ -53,7 +53,7 @@ func TestConvert(t *testing.T) {
 			t.Error(err)
 			return
 		}
-		c, err := Convert(a)
+		c, err := Convert(a, test.url)
 		if err != nil {
 			t.Error(err)
 			return
@@ -63,6 +63,35 @@ func TestConvert(t *testing.T) {
 			dmp := diffmatchpatch.New()
 			diffs := dmp.DiffMain(string(b), string(c), false)
 			t.Log(dmp.DiffCleanupSemantic(diffs))
+		}
+	}
+}
+
+func TestWorkspacePath(t *testing.T) {
+	tests := []struct{
+		a string
+		b string
+	}{
+		{
+			a: "",
+			b: "src",
+		},
+		{
+			a: "https://github.com/octocat/hello-world",
+			b: "src/github.com/octocat/hello-world",
+		},
+		{
+			a: "https://github.com:80/octocat/hello-world",
+			b: "src/github.com/octocat/hello-world",
+		},
+		{
+			a: "github.com:80/octocat/hello-world",
+			b: "src",
+		},
+	}
+	for _, test := range tests {
+		if got, want := toWorkspacePath(test.a), test.b; got != want {
+			t.Errorf("Want workspace path %s, got %s", want, got)
 		}
 	}
 }

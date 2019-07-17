@@ -8,14 +8,14 @@ platform:
 
 steps:
 - name: test
-  pull: default
+  pull: if-not-exists
   image: golang:1.11
   commands:
   - go test -v ./...
 
 services:
 - name: redis
-  pull: default
+  pull: if-not-exists
   image: redis:2.6
 
 ---
@@ -28,14 +28,14 @@ platform:
 
 steps:
 - name: test
-  pull: default
+  pull: if-not-exists
   image: golang:1.10
   commands:
   - go test -v ./...
 
 services:
 - name: redis
-  pull: default
+  pull: if-not-exists
   image: redis:2.6
 
 ---
@@ -48,14 +48,14 @@ platform:
 
 steps:
 - name: test
-  pull: default
+  pull: if-not-exists
   image: golang:1.9
   commands:
   - go test -v ./...
 
 services:
 - name: redis
-  pull: default
+  pull: if-not-exists
   image: redis:2.6
 
 ...

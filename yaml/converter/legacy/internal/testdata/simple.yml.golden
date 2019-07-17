@@ -12,7 +12,7 @@ workspace:
 
 steps:
 - name: build
-  pull: default
+  pull: if-not-exists
   image: golang
   commands:
   - go get
@@ -25,7 +25,7 @@ steps:
     path: /go/bin
 
 - name: test
-  pull: default
+  pull: if-not-exists
   image: golang:latest
   commands:
   - go test -v
@@ -34,7 +34,7 @@ steps:
     path: /go/bin
 
 - name: docker
-  pull: default
+  pull: if-not-exists
   image: plugins/docker
   settings:
     repo: octocat/hello-world
@@ -48,7 +48,7 @@ steps:
     - master
 
 - name: slack
-  pull: default
+  pull: if-not-exists
   image: plugins/slack
   settings:
     channel: general
@@ -58,7 +58,7 @@ steps:
 
 services:
 - name: database
-  pull: default
+  pull: if-not-exists
   image: mysql
   environment:
     MYSQL_PASSWORD: bar

@@ -7,6 +7,8 @@ package yaml
 import (
 	"bytes"
 	"fmt"
+	"net/url"
+	"os"
 	"sort"
 	"strings"
 
@@ -38,7 +40,7 @@ type Config struct {
 
 // Convert converts the yaml configuration file from
 // the legacy format to the 1.0+ format.
-func Convert(d []byte) ([]byte, error) {
+func Convert(d []byte, remote string) ([]byte, error) {
 	// hack: this is a hack to support teams migrating
 	// from 0.8 to 1.0 that are using yaml merge keys.
 	// it can be removed in a future version.
@@ -63,6 +65,15 @@ func Convert(d []byte) ([]byte, error) {
 	pipeline.Workspace.Path = from.Workspace.Path
 	if pipeline.Workspace.Path == "." {
 		pipeline.Workspace.Path = ""
+	}
+
+	if os.Getenv("DRONE_CONVERT_YAML_DEFAULT_WORKSPACE") == "true" {
+		if pipeline.Workspace.Base == "" {
+			pipeline.Workspace.Base = "/drone"
+		}
+		if pipeline.Workspace.Path == "" {
+			pipeline.Workspace.Path = toWorkspacePath(remote)
+		}
 	}
 
 	if len(from.Clone.Containers) != 0 {
@@ -97,6 +108,15 @@ func Convert(d []byte) ([]byte, error) {
 	pipeline.Volumes = toVolumes(from)
 	pipeline.Trigger.Branch.Include = from.Branches.Include
 	pipeline.Trigger.Branch.Exclude = from.Branches.Exclude
+
+	// registry credentials need to be emulated in 0.8. The
+	// migration utility automatically creates a secret named
+	// .dockerconfigjson for the registry credentials, which 
+	// could be automatically added to the converted
+	// configuration. THIS HAS NOT BEEN THOROUGHLY TESTED.
+	if os.Getenv("DRONE_CONVERT_YAML_DEFAULT_PULL_SECRETS") == "true" {
+		pipeline.PullSecrets = []string{".dockerconfigjson"}
+	}
 
 	if from.Matrix != nil {
 		axes, err := matrix.Parse(d)
@@ -350,4 +370,21 @@ func toVolumes(from *Config) []*droneyaml.Volume {
 		}
 	}
 	return to
+}
+
+// helper fucntion creates the workspace path using the
+// repsotiory url.
+func toWorkspacePath(link string) string {
+	parsed, err := url.Parse(link)
+	if err != nil {
+		return "src"
+	}
+	hostname := parsed.Hostname()
+	if hostname == "" {
+		return "src"
+	}
+	path := parsed.Path
+	path = strings.TrimPrefix(path, "/")
+	path = strings.TrimSuffix(path, "/")
+	return "src/" + hostname + "/" + path
 }
