@@ -70,7 +70,11 @@ volumes:
     path: /tmp/go
 
 trigger:
-  branch:
-  - master
+  ref:
+  - refs/tags/**
+  - refs/pull/**
+  - refs/pull-requests/**
+  - refs/merge-requests/**
+  - refs/heads/master
 
 ...

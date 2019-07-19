@@ -67,7 +67,7 @@ func Convert(d []byte, remote string) ([]byte, error) {
 		pipeline.Workspace.Path = ""
 	}
 
-	if os.Getenv("DRONE_CONVERT_YAML_DEFAULT_WORKSPACE") == "true" {
+	if remote != "" {
 		if pipeline.Workspace.Base == "" {
 			pipeline.Workspace.Base = "/drone"
 		}
@@ -108,6 +108,24 @@ func Convert(d []byte, remote string) ([]byte, error) {
 	pipeline.Volumes = toVolumes(from)
 	pipeline.Trigger.Branch.Include = from.Branches.Include
 	pipeline.Trigger.Branch.Exclude = from.Branches.Exclude
+
+	// if the user specifies branch conditions, we need to make
+	// sure they are still able to execute tag events.
+	if len(from.Branches.Include) > 0 && len(from.Branches.Exclude) == 0 {
+		pipeline.Trigger.Branch.Include = nil
+		pipeline.Trigger.Ref.Include = []string{
+			"refs/tags/**",
+			"refs/pull/**", // github
+			"refs/pull-requests/**", // bitbucket
+			"refs/merge-requests/**", // gitlab
+		}
+		for _, branch := range from.Branches.Include {
+			pipeline.Trigger.Ref.Include = append(
+				pipeline.Trigger.Ref.Include,
+				"refs/heads/"+branch,
+			)
+		}
+	}
 
 	// registry credentials need to be emulated in 0.8. The
 	// migration utility automatically creates a secret named

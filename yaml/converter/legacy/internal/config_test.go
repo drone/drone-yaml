@@ -21,6 +21,10 @@ func TestConvert(t *testing.T) {
 			after:  "testdata/simple.yml.golden",
 		},
 		{
+			before: "testdata/branches.yml",
+			after:  "testdata/branches.yml.golden",
+		},
+		{
 			before: "testdata/vault_1.yml",
 			after:  "testdata/vault_1.yml.golden",
 		},
