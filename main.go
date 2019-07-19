@@ -46,6 +46,7 @@ var (
 	convert     = kingpin.Command("convert", "convert the yaml file")
 	convertSave = convert.Flag("save", "save result to source").Short('s').Bool()
 	convertFile = convert.Arg("source", "source file location").Default(".drone.yml").File()
+	convertAddr = convert.Flag("addr", "remote repository address").String()
 
 	lint     = kingpin.Command("lint", "lint the yaml file")
 	lintPriv = lint.Flag("privileged", "privileged mode").Short('p').Bool()
@@ -107,6 +108,7 @@ func runConvert() error {
 	}
 	m := converter.Metadata{
 		Filename: f.Name(),
+		URL:      *convertAddr,
 	}
 	b, err := converter.Convert(d, m)
 	if err != nil {
@@ -193,7 +195,7 @@ var (
 	ref        = compile.Flag("git-ref", "git commit ref").PlaceHolder("refs/heads/master").String()
 	sha        = compile.Flag("git-sha", "git commit sha").String()
 	creds      = compile.Flag("git-creds", "git credentials").URLList()
-        cron       = compile.Flag("cron", "cron job name").String()
+	cron       = compile.Flag("cron", "cron job name").String()
 	instance   = compile.Flag("instance", "drone instance hostname").PlaceHolder("drone.company.com").String()
 	deploy     = compile.Flag("deploy-to", "target deployment").PlaceHolder("production").String()
 	secrets    = compile.Flag("secret", "secret variable").StringMap()
