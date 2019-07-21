@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Convert legacy branch filter to ref trigger, by [@bradrydzewski](https://github.com/bradrydzewski).
+- Convert legacy deployment event to promotion event, by [@bradrydzewski](https://github.com/bradrydzewski).
 
 ## [1.2.1] - 2019-07-17
 ### Added

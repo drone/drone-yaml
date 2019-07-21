@@ -267,11 +267,23 @@ func toConditions(from Constraints) droneyaml.Conditions {
 			Exclude: from.Branch.Exclude,
 		},
 		Status: droneyaml.Condition{
-			Include: from.Status.Include,
-			Exclude: from.Status.Exclude,
+			Include: toPromote(from.Status.Include),
+			Exclude: toPromote(from.Status.Exclude),
 		},
 		Matrix: from.Matrix,
 	}
+}
+
+// helper function finds and replaces deployment event status 
+// with promote status
+func toPromote(events []string) []string {
+	for i, s := range events {
+		switch s {
+		case "deploy", "deployment":
+			events[i] = "promote"
+		}
+	}
+	return events
 }
 
 // helper function converts the legacy environment syntax
