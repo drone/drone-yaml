@@ -1,0 +1,10 @@
+branches:
+- master
+
+pipeline:
+  greeting:
+    image: alpine
+    commands:
+    - echo hello
+    when:
+      event: [ tag, push ]

@@ -7,7 +7,7 @@ require (
 	github.com/buildkite/yaml v2.1.0+incompatible
 	github.com/docker/distribution v2.7.1+incompatible
 	github.com/docker/go-units v0.3.3
-	github.com/drone/drone-runtime v1.0.7-0.20190729070836-38f28a11afe8
+	github.com/drone/drone-runtime v1.0.7-0.20190729202838-87c84080f4a1
 	github.com/ghodss/yaml v1.0.0
 	github.com/google/go-cmp v0.2.0
 	github.com/kr/pretty v0.1.0 // indirect

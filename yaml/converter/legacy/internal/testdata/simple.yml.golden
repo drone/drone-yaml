@@ -71,7 +71,6 @@ volumes:
 
 trigger:
   ref:
-  - refs/tags/**
   - refs/pull/**
   - refs/pull-requests/**
   - refs/merge-requests/**

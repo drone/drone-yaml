@@ -114,7 +114,6 @@ func Convert(d []byte, remote string) ([]byte, error) {
 	if len(from.Branches.Include) > 0 && len(from.Branches.Exclude) == 0 {
 		pipeline.Trigger.Branch.Include = nil
 		pipeline.Trigger.Ref.Include = []string{
-			"refs/tags/**",
 			"refs/pull/**", // github
 			"refs/pull-requests/**", // bitbucket
 			"refs/merge-requests/**", // gitlab
@@ -124,6 +123,15 @@ func Convert(d []byte, remote string) ([]byte, error) {
 				pipeline.Trigger.Ref.Include,
 				"refs/heads/"+branch,
 			)
+		}
+		for _, step := range pipeline.Steps {
+			if sliceContains("tag", step.When.Event.Include) {
+				pipeline.Trigger.Ref.Include = append(
+					pipeline.Trigger.Ref.Include,
+					"refs/tags/**",
+				)
+				break
+			}
 		}
 	}
 
@@ -417,4 +425,14 @@ func toWorkspacePath(link string) string {
 	path = strings.TrimPrefix(path, "/")
 	path = strings.TrimSuffix(path, "/")
 	return "src/" + hostname + "/" + path
+}
+
+// helper function returns true if the slice the string.
+func sliceContains(match string, items []string) bool {
+	for _, item := range items {
+		if item == match {
+			return true
+		}
+	}
+	return false
 }
