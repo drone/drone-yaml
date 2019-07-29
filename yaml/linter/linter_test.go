@@ -193,6 +193,17 @@ func TestLint(t *testing.T) {
 			trusted: true,
 			invalid: false,
 		},
+		{
+			path:    "testdata/pipeline_network_mode.yml",
+			trusted: false,
+			invalid: true,
+			message: "linter: untrusted repositories cannot configure network_mode",
+		},
+		{
+			path:    "testdata/pipeline_network_mode.yml",
+			trusted: true,
+			invalid: false,
+		},
 		// user should not be able to use duplicate names
 		// for steps or services.
 		{
