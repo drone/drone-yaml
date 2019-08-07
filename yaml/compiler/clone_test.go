@@ -37,6 +37,10 @@ func TestCloneImage(t *testing.T) {
 			image:    "drone/git:windows-1809-amd64",
 		},
 		{
+			platform: yaml.Platform{OS: "windows", Arch: "amd64", Version: "1903"},
+			image:    "drone/git:windows-1903-amd64",
+		},
+		{
 			platform: yaml.Platform{OS: "windows", Arch: "amd64"},
 			image:    "drone/git:windows-1809-amd64",
 		},

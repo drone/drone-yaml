@@ -33,10 +33,12 @@ func cloneImage(src *yaml.Pipeline) string {
 		return "drone/git:linux-arm"
 	case src.Platform.OS == "linux" && src.Platform.Arch == "arm64":
 		return "drone/git:linux-arm64"
+	case src.Platform.OS == "windows" && src.Platform.Version == "1903":
+		return "drone/git:windows-1903-amd64"
 	case src.Platform.OS == "windows" && src.Platform.Version == "1809":
 		return "drone/git:windows-1809-amd64"
 	case src.Platform.OS == "windows" && src.Platform.Version == "1803":
-		return "drone/git:windows-1803" // TODO update to correct format
+		return "drone/git:windows-1803-amd64"
 	case src.Platform.OS == "windows" && src.Platform.Version == "1709":
 		return "drone/git:windows-1709-amd64"
 	case src.Platform.OS == "windows":
