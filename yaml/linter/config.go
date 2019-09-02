@@ -57,7 +57,7 @@ func checkPipelines(manifest *yaml.Manifest, trusted bool) error {
 				return err
 			}
 			if (v.Kind == "pipeline" || v.Kind == "") && (v.Type == "" || v.Type == "docker") {
-				err = checkPipeline(v, trusted)
+				err = checkPlatform(v.Platform)
 				if err != nil {
 					return err
 				}
