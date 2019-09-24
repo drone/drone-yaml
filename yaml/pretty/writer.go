@@ -42,11 +42,17 @@ type writer interface {
 	// Indent appends padding to the buffer.
 	Indent()
 
-	// IndentIncrease inreases indentation.
+	// IndentIncrease increases indentation.
 	IndentIncrease()
 
-	// IndentDecrese decreases indentation.
+	// IndentDecrease decreases indentation.
 	IndentDecrease()
+
+	// IncludeZero includes zero value values
+	IncludeZero()
+
+	// ExcludeZero excludes zero value values.
+	ExcludeZero()
 
 	// Write appends the contents of p to the buffer.
 	Write(p []byte) (n int, err error)
@@ -71,6 +77,7 @@ type writer interface {
 type baseWriter struct {
 	bytes.Buffer
 	depth int
+	zero  bool
 }
 
 func (w *baseWriter) Indent() {
@@ -87,6 +94,14 @@ func (w *baseWriter) IndentDecrease() {
 	w.depth--
 }
 
+func (w *baseWriter) IncludeZero() {
+	w.zero = true
+}
+
+func (w *baseWriter) ExcludeZero() {
+	w.zero = false
+}
+
 func (w *baseWriter) WriteTag(v interface{}) {
 	w.WriteByte('\n')
 	w.Indent()
@@ -95,7 +110,7 @@ func (w *baseWriter) WriteTag(v interface{}) {
 }
 
 func (w *baseWriter) WriteTagValue(k, v interface{}) {
-	if isZero(v) {
+	if isZero(v) && w.zero == false {
 		return
 	}
 	w.WriteTag(k)
@@ -122,6 +137,15 @@ func (w *baseWriter) WriteTagValue(k, v interface{}) {
 type indexWriter struct {
 	writer
 	index int
+	zero  bool
+}
+
+func (w *indexWriter) IncludeZero() {
+	w.zero = true
+}
+
+func (w *indexWriter) ExcludeZero() {
+	w.zero = false
 }
 
 func (w *indexWriter) WriteTag(v interface{}) {
@@ -141,7 +165,7 @@ func (w *indexWriter) WriteTag(v interface{}) {
 }
 
 func (w *indexWriter) WriteTagValue(k, v interface{}) {
-	if isZero(v) {
+	if isZero(v) && w.zero == false {
 		return
 	}
 	w.WriteTag(k)

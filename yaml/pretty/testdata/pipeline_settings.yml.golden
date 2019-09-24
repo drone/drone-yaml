@@ -10,6 +10,7 @@ steps:
 - name: notify
   image: plugins/slack
   settings:
+    dry_run: false
     labels:
     - foo
     - bar

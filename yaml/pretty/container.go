@@ -159,7 +159,7 @@ func printPorts(w writer, v []*yaml.Port) {
 	}
 }
 
-// helper function pretty prints the resoure mapping.
+// helper function pretty prints the resource mapping.
 func printResources(w writer, v *yaml.Resources) {
 	w.WriteTag("resources")
 	w.IndentIncrease()
@@ -194,7 +194,9 @@ func printSettings(w writer, v map[string]*yaml.Parameter) {
 	for _, k := range keys {
 		v := v[k]
 		if v.Secret == "" {
+			w.IncludeZero()
 			w.WriteTagValue(k, v.Value)
+			w.ExcludeZero()
 		} else {
 			w.WriteTag(k)
 			w.IndentIncrease()

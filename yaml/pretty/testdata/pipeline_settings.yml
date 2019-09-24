@@ -8,6 +8,7 @@ steps:
     token:
       from_secret: token
     root: general
+    dry_run: false
     labels:
     - foo
     - bar
