@@ -83,6 +83,13 @@ func Convert(d []byte, remote string) ([]byte, error) {
 				toContainer(container),
 			)
 		}
+	} else if os.Getenv("DRONE_CONVERT_YAML_LEGACY_CLONE") == "true" {
+		pipeline.Clone.Disable = true
+		pipeline.Steps = append(pipeline.Steps, &droneyaml.Container{
+			Name:  "clone",
+			Image: "plugins/git",
+			Pull:  "if-not-exists",
+		})
 	}
 
 	for _, container := range from.Services.Containers {
@@ -114,8 +121,8 @@ func Convert(d []byte, remote string) ([]byte, error) {
 	if len(from.Branches.Include) > 0 && len(from.Branches.Exclude) == 0 {
 		pipeline.Trigger.Branch.Include = nil
 		pipeline.Trigger.Ref.Include = []string{
-			"refs/pull/**", // github
-			"refs/pull-requests/**", // bitbucket
+			"refs/pull/**",           // github
+			"refs/pull-requests/**",  // bitbucket
 			"refs/merge-requests/**", // gitlab
 		}
 		for _, branch := range from.Branches.Include {
@@ -137,7 +144,7 @@ func Convert(d []byte, remote string) ([]byte, error) {
 
 	// registry credentials need to be emulated in 0.8. The
 	// migration utility automatically creates a secret named
-	// .dockerconfigjson for the registry credentials, which 
+	// .dockerconfigjson for the registry credentials, which
 	// could be automatically added to the converted
 	// configuration. THIS HAS NOT BEEN THOROUGHLY TESTED.
 	if os.Getenv("DRONE_CONVERT_YAML_DEFAULT_PULL_SECRETS") == "true" {
@@ -282,7 +289,7 @@ func toConditions(from Constraints) droneyaml.Conditions {
 	}
 }
 
-// helper function finds and replaces deployment event status 
+// helper function finds and replaces deployment event status
 // with promote status
 func toPromote(events []string) []string {
 	for i, s := range events {
