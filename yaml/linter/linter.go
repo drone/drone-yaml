@@ -37,13 +37,18 @@ var arch = map[string]struct{}{
 var ErrDuplicateStepName = errors.New("linter: duplicate step names")
 
 // ErrMissingDependency is returned when a Pipeline step
-// defines dependencies that are invlid or unknown.
+// defines dependencies that are invalid or unknown.
 var ErrMissingDependency = errors.New("linter: invalid or unknown step dependency")
 
 // ErrCyclicalDependency is returned when a Pipeline step
 // defines a cyclical dependency, which would result in an
 // infinite execution loop.
 var ErrCyclicalDependency = errors.New("linter: cyclical step dependency detected")
+
+// ErrNilStep is returned when a Pipeline step
+// is nil, the cause of this situation may be due to the
+// null value returned in the script like starlark.
+var ErrNilStep = errors.New("linter: nil step detected")
 
 // Lint performs lint operations for a resource.
 func Lint(resource yaml.Resource, trusted bool) error {
@@ -77,6 +82,9 @@ func checkPipeline(pipeline *yaml.Pipeline, trusted bool) error {
 		names["clone"] = struct{}{}
 	}
 	for _, container := range pipeline.Steps {
+		if container == nil {
+			return ErrNilStep
+		}
 		_, ok := names[container.Name]
 		if ok {
 			return ErrDuplicateStepName
@@ -94,6 +102,9 @@ func checkPipeline(pipeline *yaml.Pipeline, trusted bool) error {
 		}
 	}
 	for _, container := range pipeline.Services {
+		if container == nil {
+			return ErrNilStep
+		}
 		_, ok := names[container.Name]
 		if ok {
 			return ErrDuplicateStepName
