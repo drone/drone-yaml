@@ -60,6 +60,9 @@ func Convert(d []byte, remote string) ([]byte, error) {
 	pipeline := droneyaml.Pipeline{}
 	pipeline.Name = "default"
 	pipeline.Kind = "pipeline"
+	if os.Getenv("DRONE_CONVERT_YAML_LEGACY_TO_KUBERNETES") == "true" {
+		pipeline.Type = "kubernetes"
+	}
 
 	pipeline.Workspace.Base = from.Workspace.Base
 	pipeline.Workspace.Path = from.Workspace.Path
