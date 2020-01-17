@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"net/url"
 	"os"
+	"path/filepath"
 	"sort"
 	"strings"
 
@@ -60,9 +61,6 @@ func Convert(d []byte, remote string) ([]byte, error) {
 	pipeline := droneyaml.Pipeline{}
 	pipeline.Name = "default"
 	pipeline.Kind = "pipeline"
-	if os.Getenv("DRONE_CONVERT_YAML_LEGACY_TO_KUBERNETES") == "true" {
-		pipeline.Type = "kubernetes"
-	}
 
 	pipeline.Workspace.Base = from.Workspace.Base
 	pipeline.Workspace.Path = from.Workspace.Path
@@ -76,6 +74,36 @@ func Convert(d []byte, remote string) ([]byte, error) {
 		}
 		if pipeline.Workspace.Path == "" {
 			pipeline.Workspace.Path = toWorkspacePath(remote)
+		}
+	}
+
+	if os.Getenv("DRONE_CONVERT_YAML_LEGACY_TO_KUBERNETES") == "true" {
+		pipeline.Type = "kubernetes"
+
+		if from.Workspace.Base != "" && from.Workspace.Path != "" {
+			pipeline.Workspace.Base = ""
+			pipeline.Workspace.Path = filepath.Join(
+				from.Workspace.Base,
+				from.Workspace.Path,
+			)
+		} else if from.Workspace.Base != "" {
+			pipeline.Workspace.Base = ""
+			pipeline.Workspace.Path = filepath.Join(
+				from.Workspace.Base,
+				toWorkspacePath(remote),
+			)
+		} else if from.Workspace.Path != "" {
+			pipeline.Workspace.Base = ""
+			pipeline.Workspace.Path = filepath.Join(
+				"/drone",
+				from.Workspace.Path,
+			)
+		} else {
+			pipeline.Workspace.Base = ""
+			pipeline.Workspace.Path = filepath.Join(
+				"/drone",
+				toWorkspacePath(remote),
+			)
 		}
 	}
 
