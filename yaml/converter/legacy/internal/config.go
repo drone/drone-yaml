@@ -305,16 +305,16 @@ func toConditions(from Constraints) droneyaml.Conditions {
 			Exclude: from.Environment.Exclude,
 		},
 		Event: droneyaml.Condition{
-			Include: from.Event.Include,
-			Exclude: from.Event.Exclude,
+			Include: toPromote(from.Event.Include),
+			Exclude: toPromote(from.Event.Exclude),
 		},
 		Branch: droneyaml.Condition{
 			Include: from.Branch.Include,
 			Exclude: from.Branch.Exclude,
 		},
 		Status: droneyaml.Condition{
-			Include: toPromote(from.Status.Include),
-			Exclude: toPromote(from.Status.Exclude),
+			Include: from.Status.Include,
+			Exclude: from.Status.Exclude,
 		},
 		Matrix: from.Matrix,
 	}
