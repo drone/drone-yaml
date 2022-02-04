@@ -27,9 +27,11 @@ var os = map[string]struct{}{
 }
 
 var arch = map[string]struct{}{
-	"arm":   struct{}{},
-	"arm64": struct{}{},
-	"amd64": struct{}{},
+	"arm":     struct{}{},
+	"arm64":   struct{}{},
+	"amd64":   struct{}{},
+	"ppc64le": struct{}{},
+	"s390x":   struct{}{},
 }
 
 // ErrDuplicateStepName is returned when two Pipeline steps
